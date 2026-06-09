@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://c4pnnsvvrupn4"]
+
+[ext_resource type="Script" uid="uid://dsfstsoujhtpv" path="res://resources/characters/CharacterData.gd" id="1_ia2bp"]
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_uah6a"]
+[ext_resource type="Resource" uid="uid://cgimpu55uiq4y" path="res://resources/skills/riff_poderoso.tres" id="2_2yfqf"]
+[ext_resource type="Resource" uid="uid://nlisxqk2fuvg" path="res://resources/skills/solo_legendario.tres" id="3_i4sxi"]
+[ext_resource type="Resource" uid="uid://dbhxingoeqt6r" path="res://resources/skills/distorsion_extrema.tres" id="4_mt6q6"]
+
+[resource]
+script = ExtResource("1_ia2bp")
+nombre = "Blaze Infierno"
+rol = "guitarrista"
+carisma = 8
+tecnica = 20
+ritmo = 18
+velocidad = 12
+habilidades = Array[ExtResource("1_uah6a")]([ExtResource("2_2yfqf"), ExtResource("3_i4sxi"), ExtResource("4_mt6q6")])
+metadata/_custom_type_script = "uid://dsfstsoujhtpv"

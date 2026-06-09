@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://wv5jxb6d4thc"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_rr3og"]
+
+[resource]
+script = ExtResource("1_rr3og")
+nombre = "Redoble Especial"
+costo_energia = 30
+dano_base = 45
+tipo = "critico"
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"

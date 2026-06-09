@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://cvrsbmutqnaue"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_uj48w"]
+
+[resource]
+script = ExtResource("1_uj48w")
+nombre = "Ritmo Demoledor"
+costo_energia = 15
+dano_base = 28
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"

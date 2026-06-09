@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://c5ha0p3h1nhxl"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_kh61h"]
+
+[resource]
+script = ExtResource("1_kh61h")
+nombre = "Inspirar Banda"
+dano_base = 0
+tipo = "buff"
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"

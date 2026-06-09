@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://blmbdp47ia75u"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_v022n"]
+
+[resource]
+script = ExtResource("1_v022n")
+nombre = "Recuperación de Energía"
+costo_energia = 0
+dano_base = 0
+tipo = "recuperar"
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"

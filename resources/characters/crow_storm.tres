@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://doet2kmf3hv73"]
+
+[ext_resource type="Script" uid="uid://dsfstsoujhtpv" path="res://resources/characters/CharacterData.gd" id="1_8flrc"]
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_tb7ts"]
+[ext_resource type="Resource" uid="uid://djdglf2h28noc" path="res://resources/skills/voz_poderosa.tres" id="2_c1kec"]
+[ext_resource type="Resource" uid="uid://c5ha0p3h1nhxl" path="res://resources/skills/inspirar_banda.tres" id="3_ntjsf"]
+[ext_resource type="Resource" uid="uid://bsn1i2s2dqjhg" path="res://resources/skills/grito_legendario.tres" id="4_f3to3"]
+
+[resource]
+script = ExtResource("1_8flrc")
+nombre = "Crow Storm"
+rol = "Vocalista"
+hp_max = 120
+hp_actual = 120
+carisma = 18
+tecnica = 8
+resistencia = 8
+habilidades = Array[ExtResource("1_tb7ts")]([ExtResource("2_c1kec"), ExtResource("3_ntjsf"), ExtResource("4_f3to3")])
+metadata/_custom_type_script = "uid://dsfstsoujhtpv"

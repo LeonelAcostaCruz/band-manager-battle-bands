@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://c2plpotcscjrg"]
+
+[ext_resource type="Script" uid="uid://dsfstsoujhtpv" path="res://resources/characters/CharacterData.gd" id="1_1ndrr"]
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_k0jmt"]
+[ext_resource type="Resource" uid="uid://cvrsbmutqnaue" path="res://resources/skills/ritmo_demoledor.tres" id="2_biyd6"]
+[ext_resource type="Resource" uid="uid://wv5jxb6d4thc" path="res://resources/skills/redoble_especial.tres" id="3_4lj8n"]
+[ext_resource type="Resource" uid="uid://blmbdp47ia75u" path="res://resources/skills/recuperacion_energia.tres" id="4_jyd8h"]
+
+[resource]
+script = ExtResource("1_1ndrr")
+nombre = "Crash Doom"
+rol = "baterista"
+hp_max = 150
+hp_actual = 150
+energia_max = 110
+energia_actual = 110
+carisma = 20
+tecnica = 20
+ritmo = 20
+velocidad = 20
+resistencia = 25
+habilidades = Array[ExtResource("1_k0jmt")]([ExtResource("2_biyd6"), ExtResource("3_4lj8n"), ExtResource("4_jyd8h")])
+metadata/_custom_type_script = "uid://dsfstsoujhtpv"

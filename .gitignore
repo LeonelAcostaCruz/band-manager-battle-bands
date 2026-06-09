@@ -1,0 +1,15 @@
+# Godot
+.godot/
+*.import
+export.cfg
+export_presets.cfg
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+
+# Mono/C# (si no usas C#)
+.mono/
+data_*/
+mono_crash.*.json

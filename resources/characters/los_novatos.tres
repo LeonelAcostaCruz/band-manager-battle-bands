@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://dc30xei1abf4h"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_cqlox"]
+[ext_resource type="Script" uid="uid://dsfstsoujhtpv" path="res://resources/characters/CharacterData.gd" id="2_81a68"]
+[ext_resource type="Resource" uid="uid://cp6ryarj8rs2q" path="res://resources/skills/grito_desafinado.tres" id="2_l2002"]
+[ext_resource type="Resource" uid="uid://busx4n1xlg7yj" path="res://resources/skills/acorde_torpe.tres" id="3_ugf5r"]
+
+[resource]
+script = ExtResource("2_81a68")
+nombre = "Los Novatos"
+rol = "Enemigo "
+hp_max = 80
+hp_actual = 80
+energia_max = 80
+energia_actual = 80
+carisma = 5
+tecnica = 5
+ritmo = 5
+velocidad = 0
+resistencia = 0
+habilidades = Array[ExtResource("1_cqlox")]([ExtResource("2_l2002"), ExtResource("3_ugf5r")])
+metadata/_custom_type_script = "uid://dsfstsoujhtpv"

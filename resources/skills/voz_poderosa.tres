@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://djdglf2h28noc"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_i6xhv"]
+
+[resource]
+script = ExtResource("1_i6xhv")
+nombre = "Voz poderosa"
+costo_energia = 15
+dano_base = 25
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"

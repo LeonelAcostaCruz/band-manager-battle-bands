@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://busx4n1xlg7yj"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_47jck"]
+
+[resource]
+script = ExtResource("1_47jck")
+nombre = "Acorde Torpe"
+costo_energia = 10
+dano_base = 15
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"

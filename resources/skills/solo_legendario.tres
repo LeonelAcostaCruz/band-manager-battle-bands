@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://nlisxqk2fuvg"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_nc67p"]
+
+[resource]
+script = ExtResource("1_nc67p")
+nombre = "Solo Legendario"
+costo_energia = 35
+dano_base = 60
+tipo = "critico"
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"

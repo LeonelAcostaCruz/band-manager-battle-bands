@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://cotg2b5h4cup6"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_g8202"]
+[ext_resource type="Script" uid="uid://dsfstsoujhtpv" path="res://resources/characters/CharacterData.gd" id="1_xhf44"]
+[ext_resource type="Resource" uid="uid://b064vms25suku" path="res://resources/skills/bajo_profundo.tres" id="2_y2mvm"]
+[ext_resource type="Resource" uid="uid://1y3gab7btebd" path="res://resources/skills/pulso_de_acero.tres" id="3_k81an"]
+[ext_resource type="Resource" uid="uid://cdeb05eakvppn" path="res://resources/skills/resonancia_pesada.tres" id="4_ckflh"]
+
+[resource]
+script = ExtResource("1_xhf44")
+nombre = "Rex Thunder"
+rol = "Bajista"
+hp_max = 130
+hp_actual = 130
+carisma = 8
+tecnica = 14
+ritmo = 18
+habilidades = Array[ExtResource("1_g8202")]([ExtResource("2_y2mvm"), ExtResource("3_k81an"), ExtResource("4_ckflh")])
+metadata/_custom_type_script = "uid://dsfstsoujhtpv"

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://cp6ryarj8rs2q"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_w3apt"]
+
+[resource]
+script = ExtResource("1_w3apt")
+nombre = "Grito Desafinado"
+costo_energia = 15
+dano_base = 20
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"

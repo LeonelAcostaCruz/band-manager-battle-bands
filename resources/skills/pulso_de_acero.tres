@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://1y3gab7btebd"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_pj1ik"]
+
+[resource]
+script = ExtResource("1_pj1ik")
+nombre = "Pulso de Acero"
+dano_base = 0
+tipo = "buff"
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"
