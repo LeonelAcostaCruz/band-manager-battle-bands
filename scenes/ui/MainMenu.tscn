@@ -1,3 +1,75 @@
 [gd_scene format=3 uid="uid://cff0wmwhxtnwy"]
 
-[node name="MainMenu" type="Node2D" unique_id=1062558583]
+[ext_resource type="Script" uid="uid://bqd8iswt5mip" path="res://scenes/ui/MainMenu.gd" id="1_vjtqc"]
+
+[node name="MainMenu" type="Control" unique_id=916069917]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vjtqc")
+
+[node name="Background" type="TextureRect" parent="." unique_id=95441409]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Contenido" type="BoxContainer" parent="." unique_id=1123618642]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -265.5
+offset_top = -95.0
+offset_right = 265.5
+offset_bottom = 95.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TituloLabel" type="Label" parent="Contenido" unique_id=1479307233]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "BAND MANAGER"
+horizontal_alignment = 1
+
+[node name="SubtituloLabel" type="Label" parent="Contenido" unique_id=178083733]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+
+[node name="Botones" type="BoxContainer" parent="Contenido" unique_id=320057029]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+vertical = true
+
+[node name="BtnJugar" type="Button" parent="Contenido/Botones" unique_id=1881242327]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "JUGAR"
+
+[node name="BtnCreditos" type="Button" parent="Contenido/Botones" unique_id=1666083901]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "CREDITOS"
+
+[node name="BtnSalir" type="Button" parent="Contenido/Botones" unique_id=1333805861]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 2
+text = "SALIR"
+
+[node name="VersionLabel" type="Label" parent="." unique_id=1727029746]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "v0.1 - Unidad I"
+horizontal_alignment = 2
+
+[connection signal="pressed" from="Contenido/Botones/BtnJugar" to="." method="_on_btn_jugar_pressed"]
+[connection signal="pressed" from="Contenido/Botones/BtnCreditos" to="." method="_on_btn_creditos_pressed"]
+[connection signal="pressed" from="Contenido/Botones/BtnSalir" to="." method="_on_btn_salir_pressed"]
