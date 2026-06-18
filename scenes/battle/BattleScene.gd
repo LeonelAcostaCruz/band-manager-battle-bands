@@ -152,7 +152,7 @@ func _on_btn_recuperar_pressed():
 	await get_tree().create_timer(1.0).timeout
 	turno_jugador = false
 	verificar_batalla()  
-	actualizar_stats() 
+	actualizar_stats() 	
 	
 func actualizar_stats():
 	# HP máximo de cada personaje

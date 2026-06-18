@@ -1,6 +1,42 @@
 [gd_scene format=3 uid="uid://cff0wmwhxtnwy"]
 
 [ext_resource type="Script" uid="uid://bqd8iswt5mip" path="res://scenes/ui/MainMenu.gd" id="1_vjtqc"]
+[ext_resource type="Texture2D" uid="uid://dvp7m8vrjsy7x" path="res://assets/sprites/ui/Portada.png" id="2_6jbdy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6jbdy"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iwbf0"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ysvc"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 9
 
 [node name="MainMenu" type="Control" unique_id=916069917]
 layout_mode = 3
@@ -15,27 +51,28 @@ script = ExtResource("1_vjtqc")
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
+texture = ExtResource("2_6jbdy")
+stretch_mode = 6
 
 [node name="Contenido" type="BoxContainer" parent="." unique_id=1123618642]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 1.0
 offset_left = -265.5
-offset_top = -95.0
+offset_top = -190.0
 offset_right = 265.5
-offset_bottom = 95.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 theme_override_constants/separation = 20
 alignment = 1
 
 [node name="TituloLabel" type="Label" parent="Contenido" unique_id=1479307233]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.95421284, 0.9777201, 0.9958883, 1)
 theme_override_font_sizes/font_size = 36
-text = "BAND MANAGER"
 horizontal_alignment = 1
 
 [node name="SubtituloLabel" type="Label" parent="Contenido" unique_id=178083733]
@@ -51,16 +88,19 @@ vertical = true
 [node name="BtnJugar" type="Button" parent="Contenido/Botones" unique_id=1881242327]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_6jbdy")
 text = "JUGAR"
 
 [node name="BtnCreditos" type="Button" parent="Contenido/Botones" unique_id=1666083901]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_iwbf0")
 text = "CREDITOS"
 
 [node name="BtnSalir" type="Button" parent="Contenido/Botones" unique_id=1333805861]
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_2ysvc")
 text = "SALIR"
 
 [node name="VersionLabel" type="Label" parent="." unique_id=1727029746]
