@@ -1,5 +1,4 @@
 extends Node2D
-
 var crow_storm = preload("res://resources/characters/crow_storm.tres")
 var blaze_inferno = preload("res://resources/characters/blaze_inferno.tres")
 var rex_thunder = preload("res://resources/characters/rex_thunder.tres")
@@ -119,23 +118,28 @@ func turno_enemigo():
 	iniciar_turno()
 
 func verificar_batalla():
-	# ¿Ganó el jugador?
 	if banda_enemiga[0].hp_actual <= 0:
 		turno_label.text = "🎸 ¡VICTORIA! ¡Derrotaste a " + banda_enemiga[0].nombre + "!"
 		acciones_panel.visible = false
+		GameData.ultimo_resultado_victoria = true
+		GameData.ganar_prestigio(50)
+		GameData.guardar()
+		await get_tree().create_timer(2.0).timeout
+		get_tree().change_scene_to_file("res://scenes/ui/ResultScreen.tscn")
 		return
 	
-	# ¿Perdió el jugador?
 	var todos_caidos = banda_jugador.all(func(m): return m.hp_actual <= 0)
 	if todos_caidos:
 		turno_label.text = "💀 DERROTA... regresa al garage."
 		acciones_panel.visible = false
+		GameData.ultimo_resultado_victoria = false
+		GameData.guardar()
+		await get_tree().create_timer(2.0).timeout
+		get_tree().change_scene_to_file("res://scenes/ui/ResultScreen.tscn")
 		return
 	
-	# Siguiente turno — ahora le toca al enemigo
 	turno_jugador = false
 	iniciar_turno()
-
 func _on_btn_habilidad_1_pressed():
 	usar_habilidad(0)
 

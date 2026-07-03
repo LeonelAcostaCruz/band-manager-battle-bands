@@ -107,6 +107,10 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2ysvc")
 text = "SALIR"
 
+[node name="BtnTienda" type="Button" parent="Contenido/Botones" unique_id=2047141153]
+layout_mode = 2
+text = "🛒 TIENDA"
+
 [node name="VersionLabel" type="Label" parent="." unique_id=1727029746]
 layout_mode = 0
 offset_right = 40.0
@@ -117,3 +121,4 @@ horizontal_alignment = 2
 [connection signal="pressed" from="Contenido/Botones/BtnJugar" to="." method="_on_btn_jugar_pressed"]
 [connection signal="pressed" from="Contenido/Botones/BtnCreditos" to="." method="_on_btn_creditos_pressed"]
 [connection signal="pressed" from="Contenido/Botones/BtnSalir" to="." method="_on_btn_salir_pressed"]
+[connection signal="pressed" from="Contenido/Botones/BtnTienda" to="." method="_on_btn_tienda_pressed"]

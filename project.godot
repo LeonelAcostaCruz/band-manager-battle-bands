@@ -15,6 +15,11 @@ run/main_scene="uid://cff0wmwhxtnwy"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+UpgradeSystem="*uid://c31obudr1e5dx"
+GameData="*uid://7uum3v84sr38"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg")
