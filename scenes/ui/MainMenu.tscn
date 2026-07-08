@@ -1,7 +1,11 @@
 [gd_scene format=3 uid="uid://cff0wmwhxtnwy"]
 
 [ext_resource type="Script" uid="uid://bqd8iswt5mip" path="res://scenes/ui/MainMenu.gd" id="1_vjtqc"]
+<<<<<<< HEAD
 [ext_resource type="Texture2D" uid="uid://dvp7m8vrjsy7x" path="res://assets/sprites/ui/Portada.png" id="2_6jbdy"]
+=======
+[ext_resource type="Texture2D" uid="uid://b7k3aq5fkp5ng" path="res://Portada2.png" id="2_6jbdy"]
+>>>>>>> 2b7b2b3 (test: agregar pruebas unitarias con GUT para sistemas de batalla)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6jbdy"]
 content_margin_left = 4.0

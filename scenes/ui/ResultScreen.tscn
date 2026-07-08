@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 [gd_scene format=3 uid="uid://btvyt2ypp7u1l"]
+=======
+[gd_scene format=3 uid="uid://hgbw2uftwckf"]
+>>>>>>> 2b7b2b3 (test: agregar pruebas unitarias con GUT para sistemas de batalla)
 
 [node name="ResultScreen" type="Node2D" unique_id=2090654710]
 
