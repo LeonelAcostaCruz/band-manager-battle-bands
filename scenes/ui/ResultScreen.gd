@@ -18,3 +18,6 @@ func _on_btn_reintentar_pressed():
 
 func _on_btn_menu_pressed():
 	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")
+	
+#func _on_btn_SiguienteNivel():
+	#get_tree().change.scene_to file("res://sceenes/ui/MainMenu.tscn")

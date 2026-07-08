@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://chjx8ylkj7pgo"]
 
 [ext_resource type="Script" uid="uid://divkxncfbwkgt" path="res://scenes/battle/BattleScene.gd" id="1_1dyl0"]
+[ext_resource type="Texture2D" uid="uid://jqf05idh4ejj" path="res://assets/sprites/characters/Crow Storm — Vocalista.jpg" id="2_jb5ws"]
+[ext_resource type="Texture2D" uid="uid://b1c03mvs1r0ct" path="res://assets/Blaze Inferno — Guitarrista.jpg" id="3_rjp4h"]
+[ext_resource type="Texture2D" uid="uid://d0330w5yllryt" path="res://assets/Rex Thunder — Bajista.jpg" id="4_nabc4"]
+[ext_resource type="Texture2D" uid="uid://bagmo67p4tdla" path="res://assets/sprites/characters/Crash Doom — Baterista.jpg" id="5_q8wks"]
+[ext_resource type="Texture2D" uid="uid://dp3jlki3gbih8" path="res://assets/Enemigo — Líder de Los Novatos.jpg" id="6_nabc4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1dyl0"]
 content_margin_left = 2.0
@@ -32,16 +37,46 @@ script = ExtResource("1_1dyl0")
 [node name="BandaJugador" type="Node2D" parent="." unique_id=577550237]
 
 [node name="CrowStorm" type="Node2D" parent="BandaJugador" unique_id=2076416914]
+position = Vector2(80, 200)
+scale = Vector2(0.45, 0.45)
+
+[node name="CrowStorm" type="Sprite2D" parent="BandaJugador/CrowStorm" unique_id=1550791801]
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("2_jb5ws")
 
 [node name="BlazeInferno" type="Node2D" parent="BandaJugador" unique_id=936523048]
+position = Vector2(230, 210)
+scale = Vector2(0.45, 0.45)
+
+[node name="BlazeInferno" type="Sprite2D" parent="BandaJugador/BlazeInferno" unique_id=1691554502]
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("3_rjp4h")
 
 [node name="RexThunder" type="Node2D" parent="BandaJugador" unique_id=618404535]
+position = Vector2(380, 210)
+scale = Vector2(0.45, 0.45)
+
+[node name="RexThunder" type="Sprite2D" parent="BandaJugador/RexThunder" unique_id=1156248948]
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("4_nabc4")
 
 [node name="CrashDoom" type="Node2D" parent="BandaJugador" unique_id=646846876]
+position = Vector2(530, 200)
+scale = Vector2(0.45, 0.45)
+
+[node name="CrashDoom" type="Sprite2D" parent="BandaJugador/CrashDoom" unique_id=914485589]
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("5_q8wks")
 
 [node name="BandaEnemiga" type="Node2D" parent="." unique_id=253485869]
 
 [node name="Enemigo1" type="Node2D" parent="BandaEnemiga" unique_id=1213033290]
+position = Vector2(780, 180)
+scale = Vector2(0.45, 0.45)
+
+[node name="Enemigo1" type="Sprite2D" parent="BandaEnemiga/Enemigo1" unique_id=1559184962]
+scale = Vector2(0.35, 0.35)
+texture = ExtResource("6_nabc4")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1405840757]
 
@@ -61,9 +96,9 @@ offset_bottom = 33.0
 
 [node name="AccionesPanel" type="VBoxContainer" parent="HUD" unique_id=847725538]
 offset_left = 20.0
-offset_top = 320.0
+offset_top = 380.0
 offset_right = 28.0
-offset_bottom = 364.0
+offset_bottom = 446.0
 pivot_offset = Vector2(0, 1)
 size_flags_stretch_ratio = 0.37
 
@@ -81,11 +116,11 @@ custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 
 [node name="StatsPanel" type="VBoxContainer" parent="HUD" unique_id=80352066]
-custom_minimum_size = Vector2(350, 0)
-offset_left = 750.0
-offset_top = 150.0
-offset_right = 790.0
-offset_bottom = 297.0
+custom_minimum_size = Vector2(500, 0)
+offset_left = 700.0
+offset_top = 380.0
+offset_right = 1280.0
+offset_bottom = 760.0
 
 [node name="LabelJugadores" type="Label" parent="HUD/StatsPanel" unique_id=1644630750]
 layout_mode = 2
