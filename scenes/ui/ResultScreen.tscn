@@ -1,12 +1,8 @@
-<<<<<<< HEAD
 [gd_scene format=3 uid="uid://btvyt2ypp7u1l"]
-=======
-[gd_scene format=3 uid="uid://hgbw2uftwckf"]
->>>>>>> 2b7b2b3 (test: agregar pruebas unitarias con GUT para sistemas de batalla)
 
 [ext_resource type="Script" uid="uid://du0ubpp7xlmol" path="res://scenes/ui/ResultScreen.gd" id="1_wetrh"]
 
-[node name="ResultScreen" type="Control" unique_id=50486190]
+[node name="ResultScreen" type="Control" unique_id=563521280]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -15,13 +11,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wetrh")
 
-[node name="Fondo" type="ColorRect" parent="." unique_id=152463946]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-color = Color(0, 0, 0, 0.003921569)
+[node name="Fondo" type="ColorRect" parent="." unique_id=1360845400]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
-[node name="Contenido" type="VBoxContainer" parent="." unique_id=660460953]
+[node name="Contenido" type="VBoxContainer" parent="." unique_id=1955346612]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -34,29 +33,28 @@ offset_right = 20.0
 offset_bottom = 37.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 30
 
-[node name="ResultadoLabel" type="Label" parent="Contenido" unique_id=646697002]
+[node name="ResultadoLabel" type="Label" parent="Contenido" unique_id=51021903]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 48
 text = "RESULTADO"
 horizontal_alignment = 1
 
-[node name="MensajeLabel" type="Label" parent="Contenido" unique_id=1225186586]
+[node name="MensajeLabel" type="Label" parent="Contenido" unique_id=1209910918]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Mensaje"
 horizontal_alignment = 1
 
-[node name="Botones" type="VBoxContainer" parent="Contenido" unique_id=133387286]
+[node name="Botones" type="VBoxContainer" parent="Contenido" unique_id=1466130163]
 layout_mode = 2
 
-[node name="BtnReintentar" type="Button" parent="Contenido/Botones" unique_id=1182938219]
+[node name="BtnReintentar" type="Button" parent="Contenido/Botones" unique_id=149534578]
 custom_minimum_size = Vector2(250, 55)
 layout_mode = 2
 text = "REINTENTAR"
 
-[node name="BtnMenu" type="Button" parent="Contenido/Botones" unique_id=1740894619]
+[node name="BtnMenu" type="Button" parent="Contenido/Botones" unique_id=1903913505]
 custom_minimum_size = Vector2(250, 55)
 layout_mode = 2
 text = "MENU PRINCIPAL"
