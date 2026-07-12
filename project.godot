@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-UpgradeSystem="*uid://c31obudr1e5dx"
 GameData="*uid://7uum3v84sr38"
+UpgradeSystem="*res://scripts/UpgradeSystem.gd"
 
 [editor_plugins]
 

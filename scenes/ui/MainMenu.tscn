@@ -1,126 +1,69 @@
-[gd_scene format=3 uid="uid://cff0wmwhxtnwy"]
+[gd_scene format=3 uid="uid://cbxo6yhk2td5i"]
 
-[ext_resource type="Script" uid="uid://bqd8iswt5mip" path="res://scenes/ui/MainMenu.gd" id="1_vjtqc"]
-<<<<<<< HEAD
-[ext_resource type="Texture2D" uid="uid://dvp7m8vrjsy7x" path="res://assets/sprites/ui/Portada.png" id="2_6jbdy"]
-=======
-[ext_resource type="Texture2D" uid="uid://b7k3aq5fkp5ng" path="res://Portada2.png" id="2_6jbdy"]
->>>>>>> 2b7b2b3 (test: agregar pruebas unitarias con GUT para sistemas de batalla)
+[ext_resource type="Script" uid="uid://bqd8iswt5mip" path="res://scenes/ui/MainMenu.gd" id="1_6jbdy"]
+[ext_resource type="Texture2D" uid="uid://bvn3w72b5nsc4" path="res://assets/sprites/ui/Portada.png" id="1_vjtqc"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6jbdy"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0.6)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iwbf0"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0.6)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 10
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ysvc"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.101960786, 0.101960786, 0.101960786, 0.6)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 9
-
-[node name="MainMenu" type="Control" unique_id=916069917]
+[node name="MainMenu" type="Control" unique_id=8456917]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_6jbdy")
+
+[node name="Background" type="TextureRect" parent="." unique_id=129449493]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -7.0
+offset_top = -1.0
+offset_right = 1287.0
+offset_bottom = 767.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_vjtqc")
+texture = ExtResource("1_vjtqc")
+stretch_mode = 1
 
-[node name="Background" type="TextureRect" parent="." unique_id=95441409]
-layout_mode = 0
-offset_left = 2.0
-offset_top = -69.0
-offset_right = 1172.0
-offset_bottom = 682.0
-texture = ExtResource("2_6jbdy")
-stretch_mode = 6
-
-[node name="Contenido" type="BoxContainer" parent="." unique_id=1123618642]
+[node name="Contenido" type="VBoxContainer" parent="." unique_id=215277208]
+layout_direction = 3
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -265.5
-offset_top = -190.0
-offset_right = 265.5
+offset_left = -710.0
+offset_top = 360.0
+offset_right = -530.0
+offset_bottom = 529.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_constants/separation = 20
-alignment = 1
+theme_override_constants/separation = 10
 
-[node name="TituloLabel" type="Label" parent="Contenido" unique_id=1479307233]
+[node name="Botones" type="VBoxContainer" parent="Contenido" unique_id=1519430860]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.95421284, 0.9777201, 0.9958883, 1)
-theme_override_font_sizes/font_size = 36
-horizontal_alignment = 1
 
-[node name="SubtituloLabel" type="Label" parent="Contenido" unique_id=178083733]
+[node name="BtnJugar" type="Button" parent="Contenido/Botones" unique_id=1381060926]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-
-[node name="Botones" type="BoxContainer" parent="Contenido" unique_id=320057029]
-layout_mode = 2
-theme_override_constants/separation = 20
-alignment = 1
-vertical = true
-
-[node name="BtnJugar" type="Button" parent="Contenido/Botones" unique_id=1881242327]
-custom_minimum_size = Vector2(200, 50)
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_6jbdy")
 text = "JUGAR"
 
-[node name="BtnCreditos" type="Button" parent="Contenido/Botones" unique_id=1666083901]
-custom_minimum_size = Vector2(200, 50)
+[node name="BtnTienda" type="Button" parent="Contenido/Botones" unique_id=1718199743]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_iwbf0")
+text = "TIENDA"
+
+[node name="BtnCreditos" type="Button" parent="Contenido/Botones" unique_id=1794678062]
+layout_mode = 2
 text = "CREDITOS"
 
-[node name="BtnSalir" type="Button" parent="Contenido/Botones" unique_id=1333805861]
-custom_minimum_size = Vector2(200, 50)
+[node name="BtnSalir" type="Button" parent="Contenido/Botones" unique_id=1771516672]
 layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_2ysvc")
 text = "SALIR"
 
-[node name="BtnTienda" type="Button" parent="Contenido/Botones" unique_id=2047141153]
+[node name="VersionLabel" type="Label" parent="Contenido" unique_id=1211305603]
 layout_mode = 2
-text = "🛒 TIENDA"
-
-[node name="VersionLabel" type="Label" parent="." unique_id=1727029746]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-text = "v0.1 - Unidad I"
-horizontal_alignment = 2
+text = "v0.1 - Unidad 2"
 
 [connection signal="pressed" from="Contenido/Botones/BtnJugar" to="." method="_on_btn_jugar_pressed"]
+[connection signal="pressed" from="Contenido/Botones/BtnTienda" to="." method="_on_btn_tienda_pressed"]
 [connection signal="pressed" from="Contenido/Botones/BtnCreditos" to="." method="_on_btn_creditos_pressed"]
 [connection signal="pressed" from="Contenido/Botones/BtnSalir" to="." method="_on_btn_salir_pressed"]
-[connection signal="pressed" from="Contenido/Botones/BtnTienda" to="." method="_on_btn_tienda_pressed"]
