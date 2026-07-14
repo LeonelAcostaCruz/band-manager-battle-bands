@@ -1,9 +1,9 @@
 extends Node2D
+
 var crow_storm = preload("res://resources/characters/crow_storm.tres")
 var blaze_inferno = preload("res://resources/characters/blaze_inferno.tres")
 var rex_thunder = preload("res://resources/characters/rex_thunder.tres")
 var crash_doom = preload("res://resources/characters/crash_doom.tres")
-var los_novatos = preload("res://resources/characters/los_novatos.tres")
 
 var banda_jugador: Array = []
 var banda_enemiga: Array = []
@@ -14,36 +14,26 @@ var turno_jugador: bool = true
 @onready var hype_bar = $HUD/HypeBar
 @onready var turno_label = $HUD/TurnoLabel
 @onready var acciones_panel = $HUD/AccionesPanel
-# Agrega estas variables @onready debajo de las que ya tienes:
-@onready var hp_crow = $HUD/StatsPanel/StatsCrow/HPCrow
-@onready var energia_crow = $HUD/StatsPanel/StatsCrow/EnergiaCrow
-@onready var hp_blaze = $HUD/StatsPanel/StatsBlaze/HPBlaze
-@onready var energia_blaze = $HUD/StatsPanel/StatsBlaze/EnergiaBlaze
-@onready var hp_rex = $HUD/StatsPanel/StatsRex/HPRex
-@onready var energia_rex = $HUD/StatsPanel/StatsRex/EnergiaRex
-@onready var hp_crash = $HUD/StatsPanel/StatsCrash/HPCrash
-@onready var energia_crash = $HUD/StatsPanel/StatsCrash/EnergiaCrash
-
-@onready var nombre_crow = $HUD/StatsPanel/StatsCrow/NombreCrow
-@onready var nombre_blaze = $HUD/StatsPanel/StatsBlaze/NombreBlaze
-@onready var nombre_rex = $HUD/StatsPanel/StatsRex/NombreRex
-@onready var nombre_crash = $HUD/StatsPanel/StatsCrash/NombreCrash
 
 func _ready():
+	# Restaurar stats del jugador
 	banda_jugador = [crow_storm, blaze_inferno, rex_thunder, crash_doom]
-	banda_enemiga = [los_novatos]
-	
-	
 	for miembro in banda_jugador:
 		miembro.hp_actual = miembro.hp_max
 		miembro.energia_actual = miembro.energia_max
-	for enemigo in banda_enemiga:
-		enemigo.hp_actual = enemigo.hp_max
-		enemigo.energia_actual = enemigo.energia_max
-	
+
+	# Cargar enemigo según nivel actual
+	var nivel_data = GameData.NIVELES[GameData.nivel_actual]
+	var enemigo = load(nivel_data["enemigo"])
+	enemigo.hp_actual = enemigo.hp_max
+	enemigo.energia_actual = enemigo.energia_max
+	banda_enemiga = [enemigo]
+
 	hype_bar.max_value = 100
 	hype_bar.value = hype
-	
+
+	turno_label.text = "Nivel " + str(GameData.nivel_actual) + ": " + nivel_data["nombre"]
+	await get_tree().create_timer(1.5).timeout
 	iniciar_turno()
 	actualizar_stats()
 
@@ -68,14 +58,13 @@ func actualizar_botones(personaje: CharacterData):
 func usar_habilidad(indice: int):
 	var atacante = banda_jugador[turno_index]
 	var habilidad = atacante.habilidades[indice]
-	
+
 	if atacante.energia_actual < habilidad.costo_energia:
-		turno_label.text = "¡" + atacante.nombre + " no tiene energía!"
+		turno_label.text = "!" + atacante.nombre + " no tiene energia!"
 		return
-	
+
 	atacante.energia_actual -= habilidad.costo_energia
-	
-	# Aplicar daño al enemigo
+
 	var enemigo = banda_enemiga[0]
 	match habilidad.tipo:
 		"ataque":
@@ -85,61 +74,99 @@ func usar_habilidad(indice: int):
 		"buff":
 			atacante.carisma += 5
 		"recuperar":
-			atacante.energia_actual = min(atacante.energia_actual + 30, atacante.energia_max)
-	
+			atacante.energia_actual = min(
+				atacante.energia_actual + 30,
+				atacante.energia_max
+			)
+
+	enemigo.hp_actual = max(enemigo.hp_actual, 0)
 	hype = min(hype + 10, 100)
 	hype_bar.value = hype
-	turno_label.text = atacante.nombre + " usó " + habilidad.nombre + "!"
-	
+	turno_label.text = atacante.nombre + " uso " + habilidad.nombre + "!"
+	actualizar_stats()
+
 	await get_tree().create_timer(1.0).timeout
 	verificar_batalla()
-	actualizar_stats() 
 
 func turno_enemigo():
 	var enemigo = banda_enemiga[0]
 	if enemigo.hp_actual <= 0:
 		return
-	
-	# El enemigo ataca a un miembro aleatorio
+
 	var objetivo = banda_jugador[randi() % banda_jugador.size()]
 	var habilidad = enemigo.habilidades[randi() % enemigo.habilidades.size()]
-	
+
 	objetivo.hp_actual -= habilidad.dano_base
-	turno_label.text = enemigo.nombre + " usó " + habilidad.nombre + " contra " + objetivo.nombre + "!"
-	
+	objetivo.hp_actual = max(objetivo.hp_actual, 0)
+	turno_label.text = enemigo.nombre + " uso " + habilidad.nombre + "!"
+
 	hype = max(hype - 5, 0)
 	hype_bar.value = hype
-	
+	actualizar_stats()
+
 	await get_tree().create_timer(1.0).timeout
-	
-	# Regresa al turno del jugador
 	turno_jugador = true
 	turno_index = (turno_index + 1) % banda_jugador.size()
 	iniciar_turno()
 
 func verificar_batalla():
 	if banda_enemiga[0].hp_actual <= 0:
-		turno_label.text = "🎸 ¡VICTORIA! ¡Derrotaste a " + banda_enemiga[0].nombre + "!"
+		var nivel_data = GameData.NIVELES[GameData.nivel_actual]
+		turno_label.text = "VICTORIA! Derrotaste a " + banda_enemiga[0].nombre + "!"
 		acciones_panel.visible = false
 		GameData.ultimo_resultado_victoria = true
-		GameData.ganar_prestigio(50)
+		GameData.ganar_prestigio(nivel_data["prestigio"])
+		# Desbloquea el siguiente nivel
+		if GameData.nivel_actual < 5:
+			GameData.nivel_actual += 1
 		GameData.guardar()
 		await get_tree().create_timer(2.0).timeout
 		get_tree().change_scene_to_file("res://scenes/ui/ResultScreen.tscn")
 		return
-	
+
 	var todos_caidos = banda_jugador.all(func(m): return m.hp_actual <= 0)
 	if todos_caidos:
-		turno_label.text = "💀 DERROTA... regresa al garage."
+		turno_label.text = "DERROTA... regresa al garage."
 		acciones_panel.visible = false
 		GameData.ultimo_resultado_victoria = false
 		GameData.guardar()
 		await get_tree().create_timer(2.0).timeout
 		get_tree().change_scene_to_file("res://scenes/ui/ResultScreen.tscn")
 		return
-	
+
 	turno_jugador = false
 	iniciar_turno()
+
+func actualizar_stats():
+	var hp_crow = $HUD/StatsPanel/StatsCrow/HPCrow
+	var energia_crow = $HUD/StatsPanel/StatsCrow/EnergiaCrow
+	var hp_blaze = $HUD/StatsPanel/StatsBlaze/HPBlaze
+	var energia_blaze = $HUD/StatsPanel/StatsBlaze/EnergiaBlaze
+	var hp_rex = $HUD/StatsPanel/StatsRex/HPRex
+	var energia_rex = $HUD/StatsPanel/StatsRex/EnergiaRex
+	var hp_crash = $HUD/StatsPanel/StatsCrash/HPCrash
+	var energia_crash = $HUD/StatsPanel/StatsCrash/EnergiaCrash
+
+	hp_crow.max_value = crow_storm.hp_max
+	hp_crow.value = crow_storm.hp_actual
+	energia_crow.max_value = crow_storm.energia_max
+	energia_crow.value = crow_storm.energia_actual
+
+	hp_blaze.max_value = blaze_inferno.hp_max
+	hp_blaze.value = blaze_inferno.hp_actual
+	energia_blaze.max_value = blaze_inferno.energia_max
+	energia_blaze.value = blaze_inferno.energia_actual
+
+	hp_rex.max_value = rex_thunder.hp_max
+	hp_rex.value = rex_thunder.hp_actual
+	energia_rex.max_value = rex_thunder.energia_max
+	energia_rex.value = rex_thunder.energia_actual
+
+	hp_crash.max_value = crash_doom.hp_max
+	hp_crash.value = crash_doom.hp_actual
+	energia_crash.max_value = crash_doom.energia_max
+	energia_crash.value = crash_doom.energia_actual
+
 func _on_btn_habilidad_1_pressed():
 	usar_habilidad(0)
 
@@ -151,40 +178,12 @@ func _on_btn_habilidad_3_pressed():
 
 func _on_btn_recuperar_pressed():
 	var personaje = banda_jugador[turno_index]
-	personaje.energia_actual = min(personaje.energia_actual + 30, personaje.energia_max)
-	turno_label.text = personaje.nombre + " recuperó energía!"
+	personaje.energia_actual = min(
+		personaje.energia_actual + 30,
+		personaje.energia_max
+	)
+	turno_label.text = personaje.nombre + " recupero energia!"
+	actualizar_stats()
 	await get_tree().create_timer(1.0).timeout
 	turno_jugador = false
-	verificar_batalla()  
-	actualizar_stats() 	
-	
-func actualizar_stats():
-	# HP máximo de cada personaje
-	hp_crow.max_value = crow_storm.hp_max
-	hp_crow.value = crow_storm.hp_actual
-	energia_crow.max_value = crow_storm.energia_max
-	energia_crow.value = crow_storm.energia_actual
-	nombre_crow.text = crow_storm.nombre
-
-	hp_blaze.max_value = blaze_inferno.hp_max
-	hp_blaze.value = blaze_inferno.hp_actual
-	energia_blaze.max_value = blaze_inferno.energia_max
-	energia_blaze.value = blaze_inferno.energia_actual
-	nombre_blaze.text = blaze_inferno.nombre
-
-	hp_rex.max_value = rex_thunder.hp_max
-	hp_rex.value = rex_thunder.hp_actual
-	energia_rex.max_value = rex_thunder.energia_max
-	energia_rex.value = rex_thunder.energia_actual
-	nombre_rex.text = rex_thunder.nombre
-
-	hp_crash.max_value = crash_doom.hp_max
-	hp_crash.value = crash_doom.hp_actual
-	energia_crash.max_value = crash_doom.energia_max
-	energia_crash.value = crash_doom.energia_actual
-	nombre_crash.text = crash_doom.nombre
-	
-	# Agregar esta línea:
-	$HUD/AccionesPanel/BtnRecuperar.text = "Recuperar Energía"
-	
-	
+	verificar_batalla()
