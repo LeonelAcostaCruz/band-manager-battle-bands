@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://sxvc82crbxv2"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_qt6t8"]
+[ext_resource type="Resource" uid="uid://bpss5j1k63lhg" path="res://resources/skills/tinta_attack.tres" id="2_0vpn6"]
+[ext_resource type="Script" uid="uid://dsfstsoujhtpv" path="res://resources/characters/CharacterData.gd" id="2_y7nup"]
+
+[resource]
+script = ExtResource("2_y7nup")
+nombre = "Tinta Negra"
+rol = "enemigo"
+hp_max = 120
+hp_actual = 120
+energia_max = 90
+energia_actual = 90
+tecnica = 12
+habilidades = Array[ExtResource("1_qt6t8")]([ExtResource("2_0vpn6")])
+metadata/_custom_type_script = "uid://dsfstsoujhtpv"

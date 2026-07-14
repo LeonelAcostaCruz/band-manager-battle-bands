@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://8imaj4mvy8yd"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_upc6k"]
+
+[resource]
+script = ExtResource("1_upc6k")
+nombre = "Ruido Ensordecedor"
+descripcion = "Ataque de ruido básico"
+costo_energia = 10
+dano_base = 18
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"

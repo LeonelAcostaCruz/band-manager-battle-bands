@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://8o1hxu75l1rb"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_qqhk6"]
+[ext_resource type="Script" uid="uid://dsfstsoujhtpv" path="res://resources/characters/CharacterData.gd" id="2_bqfl7"]
+[ext_resource type="Resource" uid="uid://tnnp6wespbls" path="res://resources/skills/metal_attack.tres" id="2_m8s1c"]
+
+[resource]
+script = ExtResource("2_bqfl7")
+nombre = "Metal Excesivo"
+rol = "enemigo"
+hp_max = 180
+hp_actual = 180
+energia_max = 120
+energia_actual = 120
+tecnica = 18
+ritmo = 16
+habilidades = Array[ExtResource("1_qqhk6")]([ExtResource("2_m8s1c")])
+metadata/_custom_type_script = "uid://dsfstsoujhtpv"

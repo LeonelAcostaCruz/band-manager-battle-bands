@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://clr8ynr4dak81"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_vlg4e"]
+[ext_resource type="Script" uid="uid://dsfstsoujhtpv" path="res://resources/characters/CharacterData.gd" id="2_cvd1i"]
+[ext_resource type="Resource" uid="uid://8imaj4mvy8yd" path="res://resources/skills/ruido_attack.tres" id="2_iwp2i"]
+
+[resource]
+script = ExtResource("2_cvd1i")
+nombre = "Ruido Callejero"
+rol = "enemigo"
+energia_max = 80
+energia_actual = 80
+tecnica = 8
+ritmo = 8
+habilidades = Array[ExtResource("1_vlg4e")]([ExtResource("2_iwp2i")])
+metadata/_custom_type_script = "uid://dsfstsoujhtpv"

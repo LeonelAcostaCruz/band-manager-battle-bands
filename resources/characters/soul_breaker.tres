@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CharacterData" format=3 uid="uid://bbxpx3i62mbag"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_esslf"]
+[ext_resource type="Resource" uid="uid://tkgxu6aki2iw" path="res://resources/skills/soul_attack.tres" id="2_axvcw"]
+[ext_resource type="Script" uid="uid://dsfstsoujhtpv" path="res://resources/characters/CharacterData.gd" id="2_enjyg"]
+
+[resource]
+script = ExtResource("2_enjyg")
+nombre = "Soul Breacker"
+rol = "enemigo"
+hp_max = 150
+hp_actual = 150
+tecnica = 15
+ritmo = 14
+habilidades = Array[ExtResource("1_esslf")]([ExtResource("2_axvcw")])
+metadata/_custom_type_script = "uid://dsfstsoujhtpv"

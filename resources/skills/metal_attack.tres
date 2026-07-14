@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SkillData" format=3 uid="uid://tnnp6wespbls"]
+
+[ext_resource type="Script" uid="uid://dqvisv10ohsmh" path="res://resources/skills/SkillData.gd" id="1_p05ot"]
+
+[resource]
+script = ExtResource("1_p05ot")
+nombre = "Metal Extremo"
+descripcion = "Ataque metal devastador"
+costo_energia = 30
+dano_base = 55
+tipo = "critico"
+metadata/_custom_type_script = "uid://dqvisv10ohsmh"
