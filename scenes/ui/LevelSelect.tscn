@@ -1,3 +1,89 @@
 [gd_scene format=3 uid="uid://bsyfco7igecn6"]
 
-[node name="LevelSelect" type="Node2D" unique_id=709872589]
+[ext_resource type="Texture2D" uid="uid://bhb4vnl0ffp33" path="res://Portada2.png" id="1_2fnwa"]
+[ext_resource type="Script" uid="uid://b1e0o3hf63riy" path="res://scenes/ui/LevelSelect.gd" id="1_wp86k"]
+
+[node name="LevelSelect" type="Control" unique_id=881588652]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wp86k")
+
+[node name="BackGround" type="TextureRect" parent="." unique_id=1226915972]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_2fnwa")
+stretch_mode = 6
+
+[node name="Contenido" type="VBoxContainer" parent="." unique_id=1527144390]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -61.0
+offset_right = 20.0
+offset_bottom = 61.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="TituloLabel" type="Label" parent="Contenido" unique_id=2130150114]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "SELECCIONA NIVEL"
+horizontal_alignment = 1
+
+[node name="PrestigioLabel" type="Label" parent="Contenido" unique_id=767612488]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Prestigio: 0"
+horizontal_alignment = 1
+
+[node name="Niveles" type="VBoxContainer" parent="Contenido" unique_id=847782415]
+layout_mode = 2
+
+[node name="BtnNivel1" type="Button" parent="Contenido/Niveles" unique_id=604577317]
+custom_minimum_size = Vector2(300, 45)
+layout_mode = 2
+text = "Nivel 1 - Garage"
+
+[node name="BtnNivel2" type="Button" parent="Contenido/Niveles" unique_id=1906789536]
+custom_minimum_size = Vector2(300, 45)
+layout_mode = 2
+text = "Nivel 2 - Bar Local"
+
+[node name="BtnNivel3" type="Button" parent="Contenido/Niveles" unique_id=465243226]
+custom_minimum_size = Vector2(300, 45)
+layout_mode = 2
+text = "Nivel 3 - Escuela de Arte"
+
+[node name="BtnNivel4" type="Button" parent="Contenido/Niveles" unique_id=973183998]
+custom_minimum_size = Vector2(300, 45)
+layout_mode = 2
+text = "Nivel 4 - Callejon Underground"
+
+[node name="BtnNivel5" type="Button" parent="Contenido/Niveles" unique_id=1907497391]
+custom_minimum_size = Vector2(300, 45)
+layout_mode = 2
+text = "Nivel 5 - Club Underground"
+
+[node name="BtnVolber" type="Button" parent="Contenido" unique_id=1741097594]
+layout_mode = 2
+text = "← VOLVER"
+
+[connection signal="pressed" from="Contenido/Niveles/BtnNivel1" to="." method="_on_btn_nivel_1_pressed"]
+[connection signal="pressed" from="Contenido/Niveles/BtnNivel2" to="." method="_on_btn_nivel_2_pressed"]
+[connection signal="pressed" from="Contenido/Niveles/BtnNivel3" to="." method="_on_btn_nivel_3_pressed"]
+[connection signal="pressed" from="Contenido/Niveles/BtnNivel4" to="." method="_on_btn_nivel_4_pressed"]
+[connection signal="pressed" from="Contenido/Niveles/BtnNivel5" to="." method="_on_btn_nivel_5_pressed"]
+[connection signal="pressed" from="Contenido/BtnVolber" to="." method="_on_btn_volber_pressed"]
