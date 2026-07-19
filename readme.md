@@ -1,3 +1,10 @@
+# BAND MANAGER - BATTLE BANDS
+
+![CI Status](https://github.com/LeonelAcostaCruz/band-manager-battle-bands/actions/workflows/ci.yml/badge.svg)
+![Godot](https://img.shields.io/badge/Godot-4.6-blue)
+
+RPG Musical por Turnos - Creacion de Videojuegos - UTCJ
+
 # 🎸 BAND MANAGER – BATTLE BANDS
 
 ## 📋 Descripción
