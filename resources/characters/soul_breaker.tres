@@ -6,7 +6,8 @@
 
 [resource]
 script = ExtResource("2_enjyg")
-nombre = "Soul Breacker"
+sprite_path = "res://assets/sprites/characters/Soul Breaker.jpg"
+nombre = "Soul Breaker"
 rol = "enemigo"
 hp_max = 150
 hp_actual = 150

@@ -2,6 +2,7 @@
 class_name CharacterData
 extends Resource
 
+@export var sprite_path: String = ""
 @export var nombre: String = ""
 @export var rol: String = ""
 @export var hp_max: int = 100

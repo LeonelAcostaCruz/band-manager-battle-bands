@@ -21,13 +21,18 @@ func _ready():
 	for miembro in banda_jugador:
 		miembro.hp_actual = miembro.hp_max
 		miembro.energia_actual = miembro.energia_max
-
-	# Cargar enemigo según nivel actual
+		
+		# Cargar enemigo según nivel actual
 	var nivel_data = GameData.NIVELES[GameData.nivel_actual]
 	var enemigo = load(nivel_data["enemigo"])
 	enemigo.hp_actual = enemigo.hp_max
 	enemigo.energia_actual = enemigo.energia_max
 	banda_enemiga = [enemigo]
+	
+	# Cargar sprite del enemigo dinámicamente
+	var enemigo_sprite = $BandaEnemiga/Enemigo1/Enemigo1
+	if enemigo.sprite_path != "":
+		enemigo_sprite.texture = load(enemigo.sprite_path)
 
 	hype_bar.max_value = 100
 	hype_bar.value = hype

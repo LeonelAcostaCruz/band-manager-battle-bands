@@ -6,6 +6,7 @@
 
 [resource]
 script = ExtResource("2_bqfl7")
+sprite_path = "res://assets/sprites/characters/Metal Excesivo.jpg"
 nombre = "Metal Excesivo"
 rol = "enemigo"
 hp_max = 180

@@ -6,6 +6,7 @@
 
 [resource]
 script = ExtResource("2_cvd1i")
+sprite_path = "res://assets/sprites/characters/Ruido Callejero.jpg"
 nombre = "Ruido Callejero"
 rol = "enemigo"
 energia_max = 80

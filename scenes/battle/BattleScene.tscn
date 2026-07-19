@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://chjx8ylkj7pgo"]
 
 [ext_resource type="Script" uid="uid://divkxncfbwkgt" path="res://scenes/battle/BattleScene.gd" id="1_1dyl0"]
-[ext_resource type="Texture2D" uid="uid://jqf05idh4ejj" path="res://assets/sprites/characters/Crow Storm — Vocalista.jpg" id="2_jb5ws"]
-[ext_resource type="Texture2D" uid="uid://b1c03mvs1r0ct" path="res://assets/Blaze Inferno — Guitarrista.jpg" id="3_rjp4h"]
-[ext_resource type="Texture2D" uid="uid://d0330w5yllryt" path="res://assets/Rex Thunder — Bajista.jpg" id="4_nabc4"]
-[ext_resource type="Texture2D" uid="uid://bagmo67p4tdla" path="res://assets/sprites/characters/Crash Doom — Baterista.jpg" id="5_q8wks"]
-[ext_resource type="Texture2D" uid="uid://dp3jlki3gbih8" path="res://assets/Enemigo — Líder de Los Novatos.jpg" id="6_nabc4"]
+[ext_resource type="Texture2D" uid="uid://bn4nhgayynfoc" path="res://assets/Crow Storm — Vocalista.jpg" id="2_nabc4"]
+[ext_resource type="Texture2D" uid="uid://8qjmb3toxryc" path="res://assets/Blaze Inferno — Guitarrista.jpg" id="3_rjp4h"]
+[ext_resource type="Texture2D" uid="uid://bgp77h0rvup4h" path="res://assets/sprites/characters/rex_thunder.jpg" id="4_q8wks"]
+[ext_resource type="Texture2D" uid="uid://18sh1w8mcpps" path="res://assets/sprites/characters/crash_doom.jpg" id="5_5282s"]
+[ext_resource type="Texture2D" uid="uid://y247c4yhqc5a" path="res://assets/Enemigo — Líder de Los Novatos.jpg" id="6_nabc4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1dyl0"]
 content_margin_left = 2.0
@@ -42,7 +42,7 @@ scale = Vector2(0.45, 0.45)
 
 [node name="CrowStorm" type="Sprite2D" parent="BandaJugador/CrowStorm" unique_id=1550791801]
 scale = Vector2(0.35, 0.35)
-texture = ExtResource("2_jb5ws")
+texture = ExtResource("2_nabc4")
 
 [node name="BlazeInferno" type="Node2D" parent="BandaJugador" unique_id=936523048]
 position = Vector2(230, 210)
@@ -58,7 +58,7 @@ scale = Vector2(0.45, 0.45)
 
 [node name="RexThunder" type="Sprite2D" parent="BandaJugador/RexThunder" unique_id=1156248948]
 scale = Vector2(0.35, 0.35)
-texture = ExtResource("4_nabc4")
+texture = ExtResource("4_q8wks")
 
 [node name="CrashDoom" type="Node2D" parent="BandaJugador" unique_id=646846876]
 position = Vector2(530, 200)
@@ -66,7 +66,7 @@ scale = Vector2(0.45, 0.45)
 
 [node name="CrashDoom" type="Sprite2D" parent="BandaJugador/CrashDoom" unique_id=914485589]
 scale = Vector2(0.35, 0.35)
-texture = ExtResource("5_q8wks")
+texture = ExtResource("5_5282s")
 
 [node name="BandaEnemiga" type="Node2D" parent="." unique_id=253485869]
 

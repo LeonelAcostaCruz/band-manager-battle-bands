@@ -6,6 +6,7 @@
 
 [resource]
 script = ExtResource("2_y7nup")
+sprite_path = "res://assets/sprites/characters/Tinta Negra.jpg"
 nombre = "Tinta Negra"
 rol = "enemigo"
 hp_max = 120
