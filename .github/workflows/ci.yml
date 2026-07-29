@@ -10,6 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Run GUT Tests
+    timeout-minutes: 30
 
     steps:
       - name: Checkout repository
@@ -21,9 +22,16 @@ jobs:
           version: 4.2.2
           use-dotnet: false
 
+      - name: Cache Godot imports
+        uses: actions/cache@v4
+        with:
+          path: .godot/
+          key: godot-imports-${{ hashFiles('**/*.tscn', '**/*.tres', '**/*.gd') }}
+          restore-keys: godot-imports-
+
       - name: Import project resources
-        run: |
-          godot --headless --path . --import 2>&1 | tail -20 || true
+        run: godot --headless --path . --import || true
+        timeout-minutes: 10
 
       - name: Run GUT tests
         run: |
@@ -34,10 +42,4 @@ jobs:
           -gsuffix=.gd \
           -gexit \
           -glog=1
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: '*.log'
+        timeout-minutes: 10
