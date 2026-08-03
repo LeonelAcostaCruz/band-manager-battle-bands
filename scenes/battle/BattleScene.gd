@@ -29,6 +29,19 @@ func _ready():
 	enemigo.energia_actual = enemigo.energia_max
 	banda_enemiga = [enemigo]
 	
+	# Cargar fondo según nivel
+	var fondo_sprite = $Fondo
+	var fondo_path = nivel_data["fondo"]
+	fondo_sprite.texture = load(fondo_path)
+
+	# Ajustar escala para cubrir toda la pantalla
+	var viewport_size = get_viewport().get_visible_rect().size
+	var texture_size = fondo_sprite.texture.get_size()
+	fondo_sprite.scale = Vector2(
+	viewport_size.x / texture_size.x,
+	viewport_size.y / texture_size.y
+)
+	
 	# Cargar sprite del enemigo dinámicamente
 	var enemigo_sprite = $BandaEnemiga/Enemigo1/Enemigo1
 	if enemigo.sprite_path != "":
@@ -187,7 +200,7 @@ func _on_btn_recuperar_pressed():
 		personaje.energia_actual + 30,
 		personaje.energia_max
 	)
-	turno_label.text = personaje.nombre + " recupero energia!"
+	turno_label.text = personaje.nombre + "recupero energia!"
 	actualizar_stats()
 	await get_tree().create_timer(1.0).timeout
 	turno_jugador = false

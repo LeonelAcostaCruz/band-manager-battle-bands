@@ -34,6 +34,9 @@ corner_detail = 6
 [node name="BattleScene" type="Node2D" unique_id=837888185]
 script = ExtResource("1_1dyl0")
 
+[node name="Fondo" type="Sprite2D" parent="." unique_id=366673944]
+centered = false
+
 [node name="BandaJugador" type="Node2D" parent="." unique_id=577550237]
 
 [node name="CrowStorm" type="Node2D" parent="BandaJugador" unique_id=2076416914]
@@ -97,7 +100,7 @@ offset_bottom = 33.0
 [node name="AccionesPanel" type="VBoxContainer" parent="HUD" unique_id=847725538]
 offset_left = 20.0
 offset_top = 380.0
-offset_right = 28.0
+offset_right = 170.0
 offset_bottom = 446.0
 pivot_offset = Vector2(0, 1)
 size_flags_stretch_ratio = 0.37
@@ -117,10 +120,10 @@ layout_mode = 2
 
 [node name="StatsPanel" type="VBoxContainer" parent="HUD" unique_id=80352066]
 custom_minimum_size = Vector2(500, 0)
-offset_left = 700.0
-offset_top = 380.0
-offset_right = 1280.0
-offset_bottom = 760.0
+offset_left = 767.0
+offset_top = 384.0
+offset_right = 1267.0
+offset_bottom = 741.0
 
 [node name="LabelJugadores" type="Label" parent="HUD/StatsPanel" unique_id=1644630750]
 layout_mode = 2

@@ -39,12 +39,14 @@ theme_override_constants/separation = 15
 
 [node name="TituloLabel" type="Label" parent="Contenido" unique_id=2130150114]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.91032666, 0.0006686324, 0.9103204, 1)
 theme_override_font_sizes/font_size = 36
 text = "SELECCIONA NIVEL"
 horizontal_alignment = 1
 
 [node name="PrestigioLabel" type="Label" parent="Contenido" unique_id=767612488]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.7411765, 0, 0.5529412, 1)
 theme_override_font_sizes/font_size = 20
 text = "Prestigio: 0"
 horizontal_alignment = 1

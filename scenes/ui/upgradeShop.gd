@@ -66,6 +66,5 @@ func _on_comprar_pressed(id: String):
 func _on_btn_volver_pressed():
 	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")
 
-
 func _on_btn_volber_pressed() -> void:
 	pass # Replace with function body.

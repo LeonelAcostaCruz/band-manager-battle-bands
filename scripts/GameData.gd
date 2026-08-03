@@ -6,11 +6,11 @@ var mejoras_compradas: Array = []
 var ultimo_resultado_victoria: bool = true
 
 const NIVELES = {
-	1: {"nombre": "Garage",               "enemigo": "res://resources/characters/los_novatos.tres",      "prestigio": 50},
-	2: {"nombre": "Bar Local",            "enemigo": "res://resources/characters/ruido_callejero.tres",  "prestigio": 75},
-	3: {"nombre": "Escuela de Arte",      "enemigo": "res://resources/characters/tinta_negra.tres",      "prestigio": 100},
-	4: {"nombre": "Callejon Underground", "enemigo": "res://resources/characters/soul_breaker.tres",     "prestigio": 150},
-	5: {"nombre": "Club Underground",     "enemigo": "res://resources/characters/metal_excesivo.tres",   "prestigio": 200},
+	1: {"nombre": "Garage",               "enemigo": "res://resources/characters/los_novatos.tres",      "prestigio": 50,  "fondo": "res://assets/sprites/backgrounds/bg_garage.jpg"},
+	2: {"nombre": "Bar Local",            "enemigo": "res://resources/characters/ruido_callejero.tres",  "prestigio": 75,  "fondo": "res://assets/sprites/backgrounds/bg_bar_local.jpg"},
+	3: {"nombre": "Escuela de Arte",      "enemigo": "res://resources/characters/tinta_negra.tres",      "prestigio": 100, "fondo": "res://assets/sprites/backgrounds/bg_escuela_arte.jpg"},
+	4: {"nombre": "Callejon Underground", "enemigo": "res://resources/characters/soul_breaker.tres",     "prestigio": 150, "fondo": "res://assets/sprites/backgrounds/bg_callejon.jpg"},
+	5: {"nombre": "Club Underground",     "enemigo": "res://resources/characters/metal_excesivo.tres",   "prestigio": 200, "fondo": "res://assets/sprites/backgrounds/bg_club_underground.jpg"}
 }
 
 func ganar_prestigio(cantidad: int):
