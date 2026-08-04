@@ -40,146 +40,179 @@ centered = false
 [node name="BandaJugador" type="Node2D" parent="." unique_id=577550237]
 
 [node name="CrowStorm" type="Node2D" parent="BandaJugador" unique_id=2076416914]
-position = Vector2(80, 200)
+position = Vector2(67, 169)
 scale = Vector2(0.45, 0.45)
 
 [node name="CrowStorm" type="Sprite2D" parent="BandaJugador/CrowStorm" unique_id=1550791801]
-scale = Vector2(0.35, 0.35)
+position = Vector2(55.555557, 255.55554)
+scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_nabc4")
 
 [node name="BlazeInferno" type="Node2D" parent="BandaJugador" unique_id=936523048]
-position = Vector2(230, 210)
+position = Vector2(240, 185)
 scale = Vector2(0.45, 0.45)
 
 [node name="BlazeInferno" type="Sprite2D" parent="BandaJugador/BlazeInferno" unique_id=1691554502]
-scale = Vector2(0.35, 0.35)
+position = Vector2(24.444462, 264.44446)
+scale = Vector2(0.25, 0.25)
 texture = ExtResource("3_rjp4h")
 
 [node name="RexThunder" type="Node2D" parent="BandaJugador" unique_id=618404535]
-position = Vector2(380, 210)
+position = Vector2(410, 190)
 scale = Vector2(0.45, 0.45)
 
 [node name="RexThunder" type="Sprite2D" parent="BandaJugador/RexThunder" unique_id=1156248948]
-scale = Vector2(0.35, 0.35)
+position = Vector2(1.9073486e-06, 253.33333)
+scale = Vector2(0.25, 0.25)
 texture = ExtResource("4_q8wks")
 
 [node name="CrashDoom" type="Node2D" parent="BandaJugador" unique_id=646846876]
-position = Vector2(530, 200)
+position = Vector2(564, 157.00002)
 scale = Vector2(0.45, 0.45)
 
 [node name="CrashDoom" type="Sprite2D" parent="BandaJugador/CrashDoom" unique_id=914485589]
-scale = Vector2(0.35, 0.35)
+position = Vector2(42.2222, 264.4444)
+scale = Vector2(0.25, 0.25)
 texture = ExtResource("5_5282s")
 
 [node name="BandaEnemiga" type="Node2D" parent="." unique_id=253485869]
 
 [node name="Enemigo1" type="Node2D" parent="BandaEnemiga" unique_id=1213033290]
-position = Vector2(780, 180)
+position = Vector2(950, 150)
 scale = Vector2(0.45, 0.45)
 
 [node name="Enemigo1" type="Sprite2D" parent="BandaEnemiga/Enemigo1" unique_id=1559184962]
-scale = Vector2(0.35, 0.35)
+position = Vector2(-13.333374, 244.44446)
+scale = Vector2(0.25, 0.25)
 texture = ExtResource("6_nabc4")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1405840757]
 
 [node name="HypeBar" type="ProgressBar" parent="HUD" unique_id=655436203]
-custom_minimum_size = Vector2(500, 25)
+custom_minimum_size = Vector2(550, 28)
 offset_left = 250.0
-offset_top = 35.0
-offset_right = 650.0
-offset_bottom = 62.0
+offset_top = 30.0
+offset_right = 750.0
+offset_bottom = 57.0
 
 [node name="TurnoLabel" type="Label" parent="HUD" unique_id=323462695]
 custom_minimum_size = Vector2(400, 20)
 offset_left = 350.0
-offset_top = 10.0
+offset_top = 5.0
 offset_right = 750.0
-offset_bottom = 33.0
+offset_bottom = 28.0
+theme_override_font_sizes/font_size = 20
 
 [node name="AccionesPanel" type="VBoxContainer" parent="HUD" unique_id=847725538]
-offset_left = 20.0
-offset_top = 380.0
-offset_right = 170.0
-offset_bottom = 446.0
-pivot_offset = Vector2(0, 1)
+offset_left = 25.443787
+offset_top = 405.80463
+offset_right = 205.44379
+offset_bottom = 627.8046
+pivot_offset = Vector2(180.3352, 1.5106812)
 size_flags_stretch_ratio = 0.37
+theme_override_constants/separation = 14
 
 [node name="BtnHabilidad1" type="Button" parent="HUD/AccionesPanel" unique_id=280816429]
+custom_minimum_size = Vector2(180, 45)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 
 [node name="BtnHabilidad2" type="Button" parent="HUD/AccionesPanel" unique_id=1339802409]
+custom_minimum_size = Vector2(180, 45)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 
 [node name="BtnHabilidad3" type="Button" parent="HUD/AccionesPanel" unique_id=1938312397]
+custom_minimum_size = Vector2(180, 45)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 
 [node name="BtnRecuperar" type="Button" parent="HUD/AccionesPanel" unique_id=539232338]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(180, 45)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 
 [node name="StatsPanel" type="VBoxContainer" parent="HUD" unique_id=80352066]
-custom_minimum_size = Vector2(500, 0)
-offset_left = 767.0
-offset_top = 384.0
-offset_right = 1267.0
-offset_bottom = 741.0
+custom_minimum_size = Vector2(600, 0)
+offset_left = 666.4269
+offset_top = 450.89893
+offset_right = 1266.4269
+offset_bottom = 627.6522
+pivot_offset = Vector2(284, 98)
 
 [node name="LabelJugadores" type="Label" parent="HUD/StatsPanel" unique_id=1644630750]
 layout_mode = 2
 
 [node name="StatsCrow" type="HBoxContainer" parent="HUD/StatsPanel" unique_id=614838007]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="NombreCrow" type="Label" parent="HUD/StatsPanel/StatsCrow" unique_id=498028]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 
 [node name="HPCrow" type="ProgressBar" parent="HUD/StatsPanel/StatsCrow" unique_id=912534688]
-custom_minimum_size = Vector2(150, 18)
+custom_minimum_size = Vector2(120, 22)
 layout_mode = 2
 theme_override_styles/fill = SubResource("StyleBoxFlat_1dyl0")
 value = 100.0
 
 [node name="EnergiaCrow" type="ProgressBar" parent="HUD/StatsPanel/StatsCrow" unique_id=1571294193]
-custom_minimum_size = Vector2(150, 18)
+custom_minimum_size = Vector2(100, 22)
 layout_mode = 2
 theme_override_styles/fill = SubResource("StyleBoxFlat_jb5ws")
 value = 100.0
 
 [node name="StatsBlaze" type="HBoxContainer" parent="HUD/StatsPanel" unique_id=1291118928]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="NombreBlaze" type="Label" parent="HUD/StatsPanel/StatsBlaze" unique_id=844665646]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 
 [node name="HPBlaze" type="ProgressBar" parent="HUD/StatsPanel/StatsBlaze" unique_id=2040974856]
+custom_minimum_size = Vector2(150, 22)
 layout_mode = 2
 
 [node name="EnergiaBlaze" type="ProgressBar" parent="HUD/StatsPanel/StatsBlaze" unique_id=1430615385]
+custom_minimum_size = Vector2(100, 22)
 layout_mode = 2
 
 [node name="StatsRex" type="HBoxContainer" parent="HUD/StatsPanel" unique_id=772723328]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="NombreRex" type="Label" parent="HUD/StatsPanel/StatsRex" unique_id=1215501567]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 
 [node name="HPRex" type="ProgressBar" parent="HUD/StatsPanel/StatsRex" unique_id=182897065]
+custom_minimum_size = Vector2(150, 22)
 layout_mode = 2
 
 [node name="EnergiaRex" type="ProgressBar" parent="HUD/StatsPanel/StatsRex" unique_id=1646872835]
+custom_minimum_size = Vector2(100, 22)
 layout_mode = 2
 
 [node name="StatsCrash" type="HBoxContainer" parent="HUD/StatsPanel" unique_id=1433059422]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="NombreCrash" type="Label" parent="HUD/StatsPanel/StatsCrash" unique_id=50158143]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 
 [node name="HPCrash" type="ProgressBar" parent="HUD/StatsPanel/StatsCrash" unique_id=479509414]
+custom_minimum_size = Vector2(150, 22)
 layout_mode = 2
 
 [node name="EnergiaCrash" type="ProgressBar" parent="HUD/StatsPanel/StatsCrash" unique_id=1965447996]
+custom_minimum_size = Vector2(100, 22)
 layout_mode = 2
 
 [connection signal="pressed" from="HUD/AccionesPanel/BtnHabilidad1" to="." method="_on_btn_habilidad_1_pressed"]

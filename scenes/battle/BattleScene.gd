@@ -72,6 +72,7 @@ func actualizar_botones(personaje: CharacterData):
 	for i in range(personaje.habilidades.size()):
 		if i < botones.size():
 			botones[i].text = personaje.habilidades[i].nombre
+			$HUD/AccionesPanel/BtnRecuperar.text = "Recuperar Energia"
 
 func usar_habilidad(indice: int):
 	var atacante = banda_jugador[turno_index]

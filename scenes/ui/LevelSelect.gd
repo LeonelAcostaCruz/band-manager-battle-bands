@@ -37,9 +37,5 @@ func _on_btn_nivel_4_pressed():
 func _on_btn_nivel_5_pressed():
 	ir_a_nivel(5)
 
-func _on_btn_volver_pressed():
-	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")
-
-
 func _on_btn_volber_pressed() -> void:
-	pass # Replace with function body.
+	get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")

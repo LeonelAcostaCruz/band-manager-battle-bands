@@ -20,6 +20,10 @@ config/icon="res://icon.svg"
 GameData="*uid://7uum3v84sr38"
 UpgradeSystem="*res://scripts/UpgradeSystem.gd"
 
+[display]
+
+window/stretch/mode="canvas_items"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg")
