@@ -44,8 +44,8 @@ position = Vector2(67, 169)
 scale = Vector2(0.45, 0.45)
 
 [node name="CrowStorm" type="Sprite2D" parent="BandaJugador/CrowStorm" unique_id=1550791801]
-position = Vector2(55.555557, 255.55554)
-scale = Vector2(0.25, 0.25)
+position = Vector2(77.77779, 164.44444)
+scale = Vector2(0.33984375, 0.37890628)
 texture = ExtResource("2_nabc4")
 
 [node name="BlazeInferno" type="Node2D" parent="BandaJugador" unique_id=936523048]
@@ -53,8 +53,8 @@ position = Vector2(240, 185)
 scale = Vector2(0.45, 0.45)
 
 [node name="BlazeInferno" type="Sprite2D" parent="BandaJugador/BlazeInferno" unique_id=1691554502]
-position = Vector2(24.444462, 264.44446)
-scale = Vector2(0.25, 0.25)
+position = Vector2(91.33336, 236.88889)
+scale = Vector2(0.35112855, 0.39236113)
 texture = ExtResource("3_rjp4h")
 
 [node name="RexThunder" type="Node2D" parent="BandaJugador" unique_id=618404535]
@@ -62,8 +62,8 @@ position = Vector2(410, 190)
 scale = Vector2(0.45, 0.45)
 
 [node name="RexThunder" type="Sprite2D" parent="BandaJugador/RexThunder" unique_id=1156248948]
-position = Vector2(1.9073486e-06, 253.33333)
-scale = Vector2(0.25, 0.25)
+position = Vector2(108.88892, 231.11113)
+scale = Vector2(0.33376738, 0.39019102)
 texture = ExtResource("4_q8wks")
 
 [node name="CrashDoom" type="Node2D" parent="BandaJugador" unique_id=646846876]
@@ -71,8 +71,8 @@ position = Vector2(564, 157.00002)
 scale = Vector2(0.45, 0.45)
 
 [node name="CrashDoom" type="Sprite2D" parent="BandaJugador/CrashDoom" unique_id=914485589]
-position = Vector2(42.2222, 264.4444)
-scale = Vector2(0.25, 0.25)
+position = Vector2(133.33339, 175.55553)
+scale = Vector2(0.33767354, 0.4027778)
 texture = ExtResource("5_5282s")
 
 [node name="BandaEnemiga" type="Node2D" parent="." unique_id=253485869]
@@ -82,8 +82,8 @@ position = Vector2(950, 150)
 scale = Vector2(0.45, 0.45)
 
 [node name="Enemigo1" type="Sprite2D" parent="BandaEnemiga/Enemigo1" unique_id=1559184962]
-position = Vector2(-13.333374, 244.44446)
-scale = Vector2(0.25, 0.25)
+position = Vector2(-184.44444, 246.66664)
+scale = Vector2(0.48741317, 0.46354163)
 texture = ExtResource("6_nabc4")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1405840757]

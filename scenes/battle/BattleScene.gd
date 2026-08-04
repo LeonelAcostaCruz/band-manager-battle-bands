@@ -15,40 +15,46 @@ var turno_jugador: bool = true
 @onready var turno_label = $HUD/TurnoLabel
 @onready var acciones_panel = $HUD/AccionesPanel
 
+# Nodos de sprites de la banda jugadora
+@onready var sprite_crow = $BandaJugador/CrowStorm/CrowStorm
+@onready var sprite_blaze = $BandaJugador/BlazeInferno/BlazeInferno
+@onready var sprite_rex = $BandaJugador/RexThunder/RexThunder
+@onready var sprite_crash = $BandaJugador/CrashDoom/CrashDoom
+@onready var sprite_enemigo = $BandaEnemiga/Enemigo1/Enemigo1
+
 func _ready():
 	# Restaurar stats del jugador
 	banda_jugador = [crow_storm, blaze_inferno, rex_thunder, crash_doom]
 	for miembro in banda_jugador:
 		miembro.hp_actual = miembro.hp_max
 		miembro.energia_actual = miembro.energia_max
-		
-		# Cargar enemigo según nivel actual
+
+	# Cargar enemigo según nivel actual
 	var nivel_data = GameData.NIVELES[GameData.nivel_actual]
 	var enemigo = load(nivel_data["enemigo"])
 	enemigo.hp_actual = enemigo.hp_max
 	enemigo.energia_actual = enemigo.energia_max
 	banda_enemiga = [enemigo]
-	
+
 	# Cargar fondo según nivel
 	var fondo_sprite = $Fondo
-	var fondo_path = nivel_data["fondo"]
-	fondo_sprite.texture = load(fondo_path)
+	if ResourceLoader.exists(nivel_data["fondo"]):
+		fondo_sprite.texture = load(nivel_data["fondo"])
+		var viewport_size = get_viewport().get_visible_rect().size
+		var texture_size = fondo_sprite.texture.get_size()
+		fondo_sprite.scale = Vector2(
+			viewport_size.x / texture_size.x,
+			viewport_size.y / texture_size.y
+		)
 
-	# Ajustar escala para cubrir toda la pantalla
-	var viewport_size = get_viewport().get_visible_rect().size
-	var texture_size = fondo_sprite.texture.get_size()
-	fondo_sprite.scale = Vector2(
-	viewport_size.x / texture_size.x,
-	viewport_size.y / texture_size.y
-)
-	
 	# Cargar sprite del enemigo dinámicamente
-	var enemigo_sprite = $BandaEnemiga/Enemigo1/Enemigo1
 	if enemigo.sprite_path != "":
-		enemigo_sprite.texture = load(enemigo.sprite_path)
+		sprite_enemigo.texture = load(enemigo.sprite_path)
 
 	hype_bar.max_value = 100
 	hype_bar.value = hype
+
+	$HUD/AccionesPanel/BtnRecuperar.text = "Recuperar Energia"
 
 	turno_label.text = "Nivel " + str(GameData.nivel_actual) + ": " + nivel_data["nombre"]
 	await get_tree().create_timer(1.5).timeout
@@ -72,7 +78,6 @@ func actualizar_botones(personaje: CharacterData):
 	for i in range(personaje.habilidades.size()):
 		if i < botones.size():
 			botones[i].text = personaje.habilidades[i].nombre
-			$HUD/AccionesPanel/BtnRecuperar.text = "Recuperar Energia"
 
 func usar_habilidad(indice: int):
 	var atacante = banda_jugador[turno_index]
@@ -88,15 +93,21 @@ func usar_habilidad(indice: int):
 	match habilidad.tipo:
 		"ataque":
 			enemigo.hp_actual -= habilidad.dano_base + atacante.tecnica
+			flash_dano(sprite_enemigo, Color(1, 0, 0, 1))
 		"critico":
 			enemigo.hp_actual -= (habilidad.dano_base + atacante.tecnica) * 2
+			flash_dano(sprite_enemigo, Color(1, 0.5, 0, 1))
 		"buff":
 			atacante.carisma += 5
+			var sprites_banda = [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]
+			flash_dano(sprites_banda[turno_index], Color(0, 1, 0, 1))
 		"recuperar":
 			atacante.energia_actual = min(
 				atacante.energia_actual + 30,
 				atacante.energia_max
 			)
+			var sprites_banda = [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]
+			flash_dano(sprites_banda[turno_index], Color(0, 0.5, 1, 1))
 
 	enemigo.hp_actual = max(enemigo.hp_actual, 0)
 	hype = min(hype + 10, 100)
@@ -112,12 +123,17 @@ func turno_enemigo():
 	if enemigo.hp_actual <= 0:
 		return
 
-	var objetivo = banda_jugador[randi() % banda_jugador.size()]
+	var objetivo_index = randi() % banda_jugador.size()
+	var objetivo = banda_jugador[objetivo_index]
 	var habilidad = enemigo.habilidades[randi() % enemigo.habilidades.size()]
 
 	objetivo.hp_actual -= habilidad.dano_base
 	objetivo.hp_actual = max(objetivo.hp_actual, 0)
 	turno_label.text = enemigo.nombre + " uso " + habilidad.nombre + "!"
+
+	# Flash rojo al personaje que recibió daño
+	var sprites_banda = [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]
+	flash_dano(sprites_banda[objetivo_index], Color(1, 0, 0, 1))
 
 	hype = max(hype - 5, 0)
 	hype_bar.value = hype
@@ -135,7 +151,6 @@ func verificar_batalla():
 		acciones_panel.visible = false
 		GameData.ultimo_resultado_victoria = true
 		GameData.ganar_prestigio(nivel_data["prestigio"])
-		# Desbloquea el siguiente nivel
 		if GameData.nivel_actual < 5:
 			GameData.nivel_actual += 1
 		GameData.guardar()
@@ -201,8 +216,21 @@ func _on_btn_recuperar_pressed():
 		personaje.energia_actual + 30,
 		personaje.energia_max
 	)
-	turno_label.text = personaje.nombre + "recupero energia!"
+	turno_label.text = personaje.nombre + " recupero energia!"
 	actualizar_stats()
 	await get_tree().create_timer(1.0).timeout
 	turno_jugador = false
 	verificar_batalla()
+
+func flash_dano(sprite: Node, color: Color = Color(1, 0, 0, 1)):
+	if sprite == null:
+		return
+	# Flash de color
+	sprite.modulate = color
+	await get_tree().create_timer(0.1).timeout
+	sprite.modulate = Color(1, 1, 1, 1)
+	await get_tree().create_timer(0.1).timeout
+	sprite.modulate = color
+	await get_tree().create_timer(0.1).timeout
+	# Regresa al color normal
+	sprite.modulate = Color(1, 1, 1, 1)
