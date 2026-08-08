@@ -1,0 +1,12 @@
+crowspritesheet.png
+size: 185, 1753
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+crow1
+  bounds: 0, 0, 179, 594
+crow2
+  bounds: 0, 594, 185, 625
+crow3
+  bounds: 0, 1219, 152, 534
