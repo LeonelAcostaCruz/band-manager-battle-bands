@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://g6qhy33xhjs6"]
 
-[ext_resource type="Script" uid="uid://cwukuvs25lewr" path="res://scenes/ui/upgradeShop.gd" id="1_xkvne"]
+[ext_resource type="Script" uid="uid://dqv7vj8qdxrdi" path="res://scenes/ui/upgradeShop.gd" id="1_xkvne"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_xkvne"]
 color = Color(0.9529412, 0, 0, 1)
@@ -25,7 +25,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.05490196, 0.1764706, 0, 1)
+color = Color(0.02583826, 0.19378114, 0.18316042, 1)
 
 [node name="Titulotienda" type="Label" parent="." unique_id=1953238452]
 layout_mode = 0

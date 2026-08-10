@@ -96,12 +96,60 @@ var music_player: AudioStreamPlayer = null
 @onready var hp_crash = $HUD/StatsPanel/StatsCrash/HPCrash
 @onready var energia_crash = $HUD/StatsPanel/StatsCrash/EnergiaCrash
 
-const ANCHO_BARRA_FLOTANTE = 90.0
-const ALTO_BARRA_HP = -5.0
-const ALTO_BARRA_ENERGIA = 3.0
-const FUENTE_NOMBRE = 15
+# CAMBIO: tamaños del HUD flotante. AJUSTA ESTOS 3 para el grosor/ancho.
+const ANCHO_BARRA_FLOTANTE = 96.0
+const ALTO_BARRA_HP = 0.1        # grosor barra de vida (más chico = más delgada)
+const ALTO_BARRA_ENERGIA = 0.1 # grosor barra de energía
+const FUENTE_NOMBRE = 13
 const MARGEN_SOBRE_CABEZA = 10.0
 const ALTO_GRUPO_STATS = -120.0
+# Separaciones verticales dentro del grupo (nombre / hp / energía)
+const OFF_NOMBRE = 0.0
+const OFF_HP = 19.0
+const OFF_ENERGIA = 50.0
+const ALTO_PANEL_STATS = 54.0
+
+# CAMBIO (nuevo): paleta Battle Bands para el HUD.
+const COLOR_HP = Color(0.9, 0.15, 0.25)          # rojo (solo para HP)
+const COLOR_ENERGIA = Color(0.8, 0.2, 0.9)       # magenta/morado
+const COLOR_BARRA_FONDO = Color(0.1, 0.1, 0.12)  # gris muy oscuro
+const COLOR_BORDE = Color(0.85, 0.2, 0.8)        # magenta borde
+
+
+# CAMBIO (nuevo): construye un StyleBoxFlat para el relleno de una barra,
+# con esquinas redondeadas y borde, en el estilo Battle Bands.
+func _estilo_barra_fill(color: Color) -> StyleBoxFlat:
+	var sb = StyleBoxFlat.new()
+	sb.bg_color = color
+	sb.corner_radius_top_left = 3
+	sb.corner_radius_top_right = 3
+	sb.corner_radius_bottom_left = 3
+	sb.corner_radius_bottom_right = 3
+	# Sin márgenes internos para que no inflen el alto de la barra.
+	sb.content_margin_left = 0
+	sb.content_margin_right = 0
+	sb.content_margin_top = 0
+	sb.content_margin_bottom = 0
+	return sb
+
+
+func _estilo_barra_fondo() -> StyleBoxFlat:
+	var sb = StyleBoxFlat.new()
+	sb.bg_color = COLOR_BARRA_FONDO
+	sb.border_width_left = 1
+	sb.border_width_right = 1
+	sb.border_width_top = 1
+	sb.border_width_bottom = 1
+	sb.border_color = COLOR_BORDE
+	sb.corner_radius_top_left = 3
+	sb.corner_radius_top_right = 3
+	sb.corner_radius_bottom_left = 3
+	sb.corner_radius_bottom_right = 3
+	sb.content_margin_left = 0
+	sb.content_margin_right = 0
+	sb.content_margin_top = 0
+	sb.content_margin_bottom = 0
+	return sb
 
 const ALTO_OBJETIVO_ENEMIGO = 420.0
 
@@ -197,6 +245,12 @@ func _ready():
 	if not btn_objetos.pressed.is_connected(_on_btn_objetos_pressed):
 		btn_objetos.pressed.connect(_on_btn_objetos_pressed)
 
+	# CAMBIO (nuevo): estilo Battle Bands para todos los botones del
+	# menú de acciones (panel oscuro, borde magenta, hover con glow).
+	for boton in acciones_panel.get_children():
+		if boton is Button:
+			_estilizar_boton_bb(boton)
+
 	turno_label.text = "Nivel " + str(GameData.nivel_actual) + ": " + nivel_data["nombre"]
 
 	reubicar_stats_en_personajes()
@@ -283,34 +337,53 @@ func reubicar_stats_en_personajes():
 
 		hp_bar.custom_minimum_size = Vector2(ANCHO_BARRA_FLOTANTE, ALTO_BARRA_HP)
 		hp_bar.size = Vector2(ANCHO_BARRA_FLOTANTE, ALTO_BARRA_HP)
-		hp_bar.global_position = sprite.global_position + Vector2(-ANCHO_BARRA_FLOTANTE / 2.0, y_base - ALTO_GRUPO_STATS + 20)
+		hp_bar.global_position = sprite.global_position + Vector2(-ANCHO_BARRA_FLOTANTE / 2.0, y_base - ALTO_GRUPO_STATS + OFF_HP)
 		hp_bar.z_index = 50
-		hp_bar.add_theme_font_size_override("font_size", 13)
+		hp_bar.show_percentage = false
+		hp_bar.add_theme_stylebox_override("background", _estilo_barra_fondo())
+		hp_bar.add_theme_stylebox_override("fill", _estilo_barra_fill(COLOR_HP))
 
 		energia_bar.custom_minimum_size = Vector2(ANCHO_BARRA_FLOTANTE, ALTO_BARRA_ENERGIA)
 		energia_bar.size = Vector2(ANCHO_BARRA_FLOTANTE, ALTO_BARRA_ENERGIA)
-		energia_bar.global_position = sprite.global_position + Vector2(-ANCHO_BARRA_FLOTANTE / 2.0, y_base - ALTO_GRUPO_STATS + 40)
-		energia_bar.z_index = 30
-		energia_bar.add_theme_font_size_override("font_size", 14)
+		energia_bar.global_position = sprite.global_position + Vector2(-ANCHO_BARRA_FLOTANTE / 2.0, y_base - ALTO_GRUPO_STATS + OFF_ENERGIA)
+		energia_bar.z_index = 50
+		energia_bar.show_percentage = false
+		energia_bar.add_theme_stylebox_override("background", _estilo_barra_fondo())
+		energia_bar.add_theme_stylebox_override("fill", _estilo_barra_fill(COLOR_ENERGIA))
 
-		var fondo = ColorRect.new()
+		# CAMBIO: fondo compacto (panel oscuro con borde magenta) que
+		# envuelve nombre + 2 barras. Antes tenía altura negativa y no
+		# se veía; ahora es un Panel con el estilo Battle Bands.
+		var origen_grupo = sprite.global_position + Vector2(-ANCHO_BARRA_FLOTANTE / 2.0, y_base - ALTO_GRUPO_STATS)
+		var fondo = Panel.new()
 		fondo.name = "FondoStats"
-		fondo.color = Color(0, 0, 0, 0.45)
-		fondo.size = Vector2(ANCHO_BARRA_FLOTANTE + 14, ALTO_GRUPO_STATS + 10)
+		var sb_fondo = StyleBoxFlat.new()
+		sb_fondo.bg_color = Color(0, 0, 0, 0.5)
+		sb_fondo.border_width_left = 1
+		sb_fondo.border_width_right = 1
+		sb_fondo.border_width_top = 1
+		sb_fondo.border_width_bottom = 1
+		sb_fondo.border_color = Color(COLOR_BORDE.r, COLOR_BORDE.g, COLOR_BORDE.b, 0.6)
+		sb_fondo.corner_radius_top_left = 4
+		sb_fondo.corner_radius_top_right = 4
+		sb_fondo.corner_radius_bottom_left = 4
+		sb_fondo.corner_radius_bottom_right = 4
+		fondo.add_theme_stylebox_override("panel", sb_fondo)
+		fondo.size = Vector2(ANCHO_BARRA_FLOTANTE + 12, ALTO_PANEL_STATS)
 		fondo.top_level = true
-		fondo.global_position = sprite.global_position + Vector2(-ANCHO_BARRA_FLOTANTE / 2.0 - 8, y_base - ALTO_GRUPO_STATS - 4)
+		fondo.global_position = origen_grupo + Vector2(-6, -2)
 		fondo.z_index = 49
 		sprite.add_child(fondo)
 
 		var nombre_label = Label.new()
 		nombre_label.name = "NombreFlotante"
-		nombre_label.text = personaje.nombre
+		nombre_label.text = personaje.nombre.to_upper()
 		nombre_label.add_theme_font_size_override("font_size", FUENTE_NOMBRE)
 		nombre_label.add_theme_color_override("font_color", Color(1, 1, 1))
 		nombre_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-		nombre_label.add_theme_constant_override("outline_size", 5)
+		nombre_label.add_theme_constant_override("outline_size", 4)
 		nombre_label.top_level = true
-		nombre_label.global_position = sprite.global_position + Vector2(-ANCHO_BARRA_FLOTANTE / 2.0, y_base - ALTO_GRUPO_STATS)
+		nombre_label.global_position = origen_grupo
 		nombre_label.z_index = 50
 		sprite.add_child(nombre_label)
 
@@ -448,37 +521,43 @@ func usar_habilidad(indice: int):
 	var enemigo = banda_enemiga[0]
 
 	# CAMBIO (nuevo): mini-juego de timing antes de golpear/critico.
-	var qte_exito = false
+	# La calidad (perfect/good/miss) multiplica el daño.
+	var qte_calidad = "good"  # valor neutro si no aplica QTE
 	if habilidad.tipo == "ataque" or habilidad.tipo == "critico":
-		qte_exito = await mostrar_qte()
+		qte_calidad = await mostrar_qte()
+	var mult_qte = 1.0
+	match qte_calidad:
+		"perfect": mult_qte = 1.75
+		"good": mult_qte = 1.25
+		"miss": mult_qte = 0.75
 
 	match habilidad.tipo:
 		"ataque":
-			var cantidad = habilidad.dano_base + atacante.tecnica
-			if qte_exito:
-				cantidad = int(round(cantidad * 1.5))
+			var cantidad = int(round((habilidad.dano_base + atacante.tecnica) * mult_qte))
 			enemigo.hp_actual -= cantidad
+			# Secuencia de golpe satisfactorio: ATTACK → zoom → freeze →
+			# flash → shake → slash → número → enemigo HURT
 			reproducir_anim(sprite_atacante, "ataque", 0.4)
 			reproducir_sfx_ataque(turno_index)
 			trail_durante_animacion(sprite_atacante, 0.35)
-			await hit_stop(0.05, 0.05)
+			zoom_punch(0.25, 0.10)
+			await hit_stop(0.08, 0.05)
 			reproducir_sfx_impacto(SFX_IMPACTO_ATAQUE, sprite_enemigo)
 			reproducir_anim(sprite_enemigo, "dano", 0.4)
 			flash_dano(sprite_enemigo, Color(1, 0, 0, 1))
 			spawn_impact_particles(sprite_enemigo, Color(1, 0.3, 0.1))
 			spawn_slash(sprite_enemigo, Color(1, 0.9, 0.7, 0.9))
-			spawn_damage_number(sprite_enemigo, ("¡PERFECTO! -" if qte_exito else "-") + str(cantidad), Color(1, 0.3, 0.1) if not qte_exito else Color(1, 0.9, 0.2))
+			spawn_damage_number(sprite_enemigo, ("¡PERFECT! -" if qte_calidad == "perfect" else "-") + str(cantidad), Color(1, 0.9, 0.2) if qte_calidad == "perfect" else Color(1, 0.3, 0.1))
 			squash_stretch(sprite_enemigo)
 			knockback(sprite_enemigo, Vector2.RIGHT)
-			shake_camera(0.25, 6.0)
+			shake_camera(0.25, 7.0)
 		"critico":
-			var cantidad = (habilidad.dano_base + atacante.tecnica) * 2
-			if qte_exito:
-				cantidad = int(round(cantidad * 1.5))
+			var cantidad = int(round((habilidad.dano_base + atacante.tecnica) * 2 * mult_qte))
 			enemigo.hp_actual -= cantidad
 			reproducir_anim(sprite_atacante, "ataque", 0.4)
 			reproducir_sfx_ataque(turno_index)
 			trail_durante_animacion(sprite_atacante, 0.35, Color(1, 0.85, 0.3, 0.4))
+			zoom_punch(0.35, 0.18)
 			await hit_stop(0.09, 0.03)
 			reproducir_sfx_impacto(SFX_IMPACTO_CRITICO, sprite_enemigo)
 			reproducir_anim(sprite_enemigo, "dano", 0.4)
@@ -489,7 +568,6 @@ func usar_habilidad(indice: int):
 			squash_stretch(sprite_enemigo)
 			knockback(sprite_enemigo, Vector2.RIGHT)
 			shake_camera(0.4, 12.0)
-			zoom_punch(0.35, 0.18)
 			mostrar_vineta(0.35, 0.45)
 		"buff":
 			atacante.carisma += 5
@@ -577,13 +655,18 @@ func verificar_batalla(turno_jugador_siguiente: bool = false):
 		fade_out_musica(1.5)
 		for sprite in [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]:
 			spawn_confetti(sprite)
+
+		var prestigio_ganado = nivel_data["prestigio"]
+		var fans_ganados = prestigio_ganado * 2 + hype
 		GameData.ultimo_resultado_victoria = true
-		GameData.ganar_prestigio(nivel_data["prestigio"])
+		GameData.ganar_prestigio(prestigio_ganado)
 		if GameData.nivel_actual < 5:
 			GameData.nivel_actual += 1
 		GameData.guardar()
-		await get_tree().create_timer(2.0).timeout
-		get_tree().change_scene_to_file("res://scenes/ui/ResultScreen.tscn")
+
+		# CAMBIO: pantalla de victoria SOBRE el escenario (no negro).
+		await get_tree().create_timer(1.0).timeout
+		mostrar_victoria_en_escena(prestigio_ganado, fans_ganados)
 		return
 
 	var todos_caidos = banda_jugador.all(func(m): return m.hp_actual <= 0)
@@ -1141,8 +1224,11 @@ func mostrar_vineta(duracion: float = 0.4, intensidad: float = 0.6):
 # para detectar si está sobre la zona verde cuando el jugador presiona
 # (ui_accept = Espacio/Enter). Devuelve true si acertó dentro de la zona.
 # ============================================================
-func mostrar_qte() -> bool:
-	qte_en_zona = false
+# CAMBIO: ahora devuelve una CALIDAD ("perfect" / "good" / "miss") en
+# vez de solo true/false. La barra tiene dos zonas concéntricas:
+# GOOD (amplia, magenta) y PERFECT (angosta y brillante en el centro).
+# Al presionar muestra un texto grande PERFECT!/GOOD!/MISS! con escala.
+func mostrar_qte() -> String:
 	qte_direccion = 1
 
 	var capa = CanvasLayer.new()
@@ -1150,75 +1236,64 @@ func mostrar_qte() -> bool:
 	add_child(capa)
 
 	var viewport_size = get_viewport().get_visible_rect().size
-	var ancho_barra = 400.0
-	var origen_barra = Vector2(viewport_size.x / 2.0 - ancho_barra / 2.0, viewport_size.y - 160)
+	var ancho_barra = 420.0
+	var origen_barra = Vector2(viewport_size.x / 2.0 - ancho_barra / 2.0, viewport_size.y - 170)
+
+	# Marco/fondo de la barra
+	var marco = ColorRect.new()
+	marco.color = Color(0, 0, 0, 0.7)
+	marco.size = Vector2(ancho_barra + 8, 34)
+	marco.position = origen_barra + Vector2(-4, -5)
+	capa.add_child(marco)
 
 	var fondo_barra = ColorRect.new()
-	fondo_barra.color = Color(0, 0, 0, 0.6)
+	fondo_barra.color = Color(0.08, 0.08, 0.1, 0.9)
 	fondo_barra.size = Vector2(ancho_barra, 24)
 	fondo_barra.position = origen_barra
 	capa.add_child(fondo_barra)
 
-	var ancho_zona = 70.0
-	var offset_zona = randf_range(20, ancho_barra - 20 - ancho_zona)
-	var zona_visual = ColorRect.new()
-	zona_visual.color = Color(0.2, 1.0, 0.3, 0.85)
-	zona_visual.size = Vector2(ancho_zona, 24)
-	zona_visual.position = origen_barra + Vector2(offset_zona, 0)
-	capa.add_child(zona_visual)
+	# Zona GOOD (amplia)
+	var ancho_good = 120.0
+	var offset_good = randf_range(20, ancho_barra - 20 - ancho_good)
+	var zona_good = ColorRect.new()
+	zona_good.color = Color(0.9, 0.2, 0.8, 0.55)  # magenta
+	zona_good.size = Vector2(ancho_good, 24)
+	zona_good.position = origen_barra + Vector2(offset_good, 0)
+	capa.add_child(zona_good)
+
+	# Zona PERFECT (angosta, centrada dentro de GOOD, brillante)
+	var ancho_perfect = 34.0
+	var offset_perfect = offset_good + (ancho_good - ancho_perfect) / 2.0
+	var zona_perfect = ColorRect.new()
+	zona_perfect.color = Color(1, 0.95, 0.4, 0.95)  # dorado brillante
+	zona_perfect.size = Vector2(ancho_perfect, 24)
+	zona_perfect.position = origen_barra + Vector2(offset_perfect, 0)
+	capa.add_child(zona_perfect)
 
 	var marcador_visual = ColorRect.new()
 	marcador_visual.color = Color(1, 1, 1, 1)
-	marcador_visual.size = Vector2(6, 30)
-	marcador_visual.position = origen_barra + Vector2(0, -3)
+	marcador_visual.size = Vector2(5, 34)
+	marcador_visual.position = origen_barra + Vector2(0, -5)
 	capa.add_child(marcador_visual)
 
 	var instrucciones = Label.new()
-	instrucciones.text = "¡Presiona ESPACIO en el momento justo!"
+	instrucciones.text = "¡ESPACIO en el momento justo!"
 	instrucciones.add_theme_font_size_override("font_size", 20)
 	instrucciones.add_theme_color_override("font_color", Color(1, 1, 1))
-	instrucciones.position = origen_barra + Vector2(0, -40)
+	instrucciones.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	instrucciones.add_theme_constant_override("outline_size", 4)
+	instrucciones.position = origen_barra + Vector2(0, -42)
 	capa.add_child(instrucciones)
 
-	var mundo_qte = Node2D.new()
-	capa.add_child(mundo_qte)
-
-	qte_zona_area = Area2D.new()
-	var zona_shape = CollisionShape2D.new()
-	var zona_rect = RectangleShape2D.new()
-	zona_rect.size = Vector2(ancho_zona, 24)
-	zona_shape.shape = zona_rect
-	qte_zona_area.add_child(zona_shape)
-	qte_zona_area.position = origen_barra + Vector2(offset_zona + ancho_zona / 2.0, 12)
-	mundo_qte.add_child(qte_zona_area)
-
-	qte_marcador_area = Area2D.new()
-	var marcador_shape = CollisionShape2D.new()
-	var marcador_rect = RectangleShape2D.new()
-	marcador_rect.size = Vector2(6, 30)
-	marcador_shape.shape = marcador_rect
-	qte_marcador_area.add_child(marcador_shape)
-	qte_marcador_area.position = origen_barra + Vector2(0, 12)
-	mundo_qte.add_child(qte_marcador_area)
-
-	qte_zona_area.area_entered.connect(func(area):
-		if area == qte_marcador_area:
-			qte_en_zona = true
-	)
-	qte_zona_area.area_exited.connect(func(area):
-		if area == qte_marcador_area:
-			qte_en_zona = false
-	)
-
-	var exito = false
+	var calidad = "miss"
 	var tiempo_max = 2.5
 	var t = 0.0
+	var x_actual = 0.0
 
 	while t < tiempo_max:
 		var delta = get_process_delta_time()
 		t += delta
 
-		var x_actual = qte_marcador_area.position.x - origen_barra.x
 		x_actual += qte_direccion * qte_velocidad * delta
 		if x_actual <= 0:
 			x_actual = 0
@@ -1227,23 +1302,47 @@ func mostrar_qte() -> bool:
 			x_actual = ancho_barra
 			qte_direccion = -1
 
-		qte_marcador_area.position.x = origen_barra.x + x_actual
-		marcador_visual.position.x = origen_barra.x + x_actual - 3
+		marcador_visual.position.x = origen_barra.x + x_actual - 2
 
 		if Input.is_action_just_pressed("ui_accept"):
-			exito = qte_en_zona
+			# Determinar calidad según dónde cayó el marcador
+			if x_actual >= offset_perfect and x_actual <= offset_perfect + ancho_perfect:
+				calidad = "perfect"
+			elif x_actual >= offset_good and x_actual <= offset_good + ancho_good:
+				calidad = "good"
+			else:
+				calidad = "miss"
 			break
 
 		await get_tree().process_frame
 
-	if exito:
-		zona_visual.color = Color(1, 0.9, 0.2, 0.9)
-	else:
-		zona_visual.color = Color(1, 0.2, 0.2, 0.7)
+	# Texto grande de resultado con escala rápida
+	var resultado = Label.new()
+	match calidad:
+		"perfect":
+			resultado.text = "PERFECT!"
+			resultado.add_theme_color_override("font_color", Color(1, 0.95, 0.3))
+		"good":
+			resultado.text = "GOOD!"
+			resultado.add_theme_color_override("font_color", Color(1, 0.4, 0.9))
+		_:
+			resultado.text = "MISS!"
+			resultado.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	resultado.add_theme_font_size_override("font_size", 64)
+	resultado.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	resultado.add_theme_constant_override("outline_size", 8)
+	resultado.position = Vector2(viewport_size.x / 2.0 - 120, viewport_size.y - 260)
+	resultado.scale = Vector2(0.3, 0.3)
+	resultado.pivot_offset = Vector2(120, 40)
+	capa.add_child(resultado)
 
-	await get_tree().create_timer(0.15).timeout
+	var tw = create_tween()
+	tw.tween_property(resultado, "scale", Vector2(1.2, 1.2), 0.12).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw.tween_property(resultado, "scale", Vector2(1.0, 1.0), 0.08)
+
+	await get_tree().create_timer(0.4).timeout
 	capa.queue_free()
-	return exito
+	return calidad
 
 
 func mostrar_banner_jefe(nombre_enemigo: String):
@@ -1407,3 +1506,150 @@ func spawn_slash(target: Node2D, color: Color = Color(1, 1, 1, 0.9), cantidad: i
 		tween.tween_interval(0.05)
 		tween.tween_property(linea, "modulate:a", 0.0, 0.2)
 		tween.tween_callback(linea.queue_free)
+
+
+# ============================================================
+# CAMBIO (nuevo): pantalla de victoria SOBRE el escenario. Oscurece el
+# venue (no negro total), pone a la banda en pose de victoria, agrega
+# reflectores desde atrás y muestra VICTORIA! + Prestigio + Fans con
+# botones CONTINUAR / MENÚ.
+# ============================================================
+func mostrar_victoria_en_escena(prestigio_ganado: int, fans_ganados: int):
+	var viewport_size = get_viewport().get_visible_rect().size
+
+	# La banda a pose de victoria (usa "victoria" si existe, si no idle)
+	for sprite in [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]:
+		if sprite is AnimatedSprite2D and sprite.sprite_frames != null:
+			if sprite.sprite_frames.has_animation("victoria"):
+				sprite.play("victoria")
+			elif sprite.sprite_frames.has_animation("hype"):
+				sprite.play("hype")
+
+	var capa = CanvasLayer.new()
+	capa.layer = 90
+	capa.name = "VictoriaFX"
+	add_child(capa)
+
+	# Oscurecido parcial (escenario visible)
+	var oscuro = ColorRect.new()
+	oscuro.color = Color(0, 0, 0, 0.0)
+	oscuro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	oscuro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	capa.add_child(oscuro)
+	var tw_osc = create_tween()
+	tw_osc.tween_property(oscuro, "color", Color(0, 0, 0, 0.5), 0.5)
+
+	# Reflectores brillantes desde arriba hacia la banda
+	for i in range(3):
+		var haz = Polygon2D.new()
+		haz.polygon = PackedVector2Array([
+			Vector2(0, 0),
+			Vector2(-90, viewport_size.y * 0.8),
+			Vector2(90, viewport_size.y * 0.8),
+		])
+		haz.color = [Color(1, 0.3, 0.85, 0.14), Color(0.4, 0.6, 1, 0.14), Color(1, 0.9, 0.4, 0.12)][i]
+		haz.position = Vector2(viewport_size.x * (0.3 + 0.2 * i), 0)
+		capa.add_child(haz)
+		var tw_haz = create_tween()
+		tw_haz.set_loops()
+		tw_haz.tween_property(haz, "position:x", haz.position.x + 60, 2.0).set_trans(Tween.TRANS_SINE)
+		tw_haz.tween_property(haz, "position:x", haz.position.x - 60, 2.0).set_trans(Tween.TRANS_SINE)
+
+	# Panel central: CenterContainer de pantalla completa para centrar
+	# de forma confiable (evita que el texto se salga de la pantalla).
+	var centrador = CenterContainer.new()
+	centrador.set_anchors_preset(Control.PRESET_FULL_RECT)
+	centrador.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	capa.add_child(centrador)
+
+	var panel = VBoxContainer.new()
+	panel.alignment = BoxContainer.ALIGNMENT_CENTER
+	panel.custom_minimum_size = Vector2(320, 0)
+	panel.add_theme_constant_override("separation", 10)
+	centrador.add_child(panel)
+
+	var titulo = Label.new()
+	titulo.text = "¡VICTORIA!"
+	titulo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	titulo.add_theme_font_size_override("font_size", 72)
+	titulo.add_theme_color_override("font_color", Color(0.3, 1, 0.4))
+	titulo.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	titulo.add_theme_constant_override("outline_size", 10)
+	panel.add_child(titulo)
+
+	var l_prestigio = Label.new()
+	l_prestigio.text = "+" + str(prestigio_ganado) + " Prestigio"
+	l_prestigio.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l_prestigio.add_theme_font_size_override("font_size", 28)
+	l_prestigio.add_theme_color_override("font_color", Color(1, 0.85, 0.2))
+	l_prestigio.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	l_prestigio.add_theme_constant_override("outline_size", 5)
+	panel.add_child(l_prestigio)
+
+	var l_fans = Label.new()
+	l_fans.text = "+" + str(fans_ganados) + " Fans"
+	l_fans.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l_fans.add_theme_font_size_override("font_size", 28)
+	l_fans.add_theme_color_override("font_color", Color(1, 0.4, 0.9))
+	l_fans.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	l_fans.add_theme_constant_override("outline_size", 5)
+	panel.add_child(l_fans)
+
+	var espacio = Control.new()
+	espacio.custom_minimum_size = Vector2(0, 20)
+	panel.add_child(espacio)
+
+	var btn_continuar = Button.new()
+	btn_continuar.text = "▶  CONTINUAR"
+	btn_continuar.custom_minimum_size = Vector2(300, 54)
+	_estilizar_boton_bb(btn_continuar)
+	btn_continuar.pressed.connect(func():
+		get_tree().change_scene_to_file("res://scenes/battle/BattleScene.tscn")
+	)
+	panel.add_child(btn_continuar)
+
+	var btn_menu = Button.new()
+	btn_menu.text = "MENÚ PRINCIPAL"
+	btn_menu.custom_minimum_size = Vector2(300, 46)
+	_estilizar_boton_bb(btn_menu)
+	btn_menu.pressed.connect(func():
+		get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")
+	)
+	panel.add_child(btn_menu)
+
+	# Entrada del título con escala (espera un frame para que el layout
+	# calcule el tamaño real y el pivote quede centrado).
+	await get_tree().process_frame
+	titulo.pivot_offset = titulo.size / 2.0
+	titulo.scale = Vector2(0.2, 0.2)
+	var tw_tit = create_tween()
+	tw_tit.tween_property(titulo, "scale", Vector2(1.15, 1.15), 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tw_tit.tween_property(titulo, "scale", Vector2(1.0, 1.0), 0.15)
+
+
+# CAMBIO (nuevo): estilo Battle Bands para botones (panel oscuro, borde
+# magenta, texto blanco). Reusa esto en otros botones que quieras.
+func _estilizar_boton_bb(btn: Button):
+	var normal = StyleBoxFlat.new()
+	normal.bg_color = Color(0.06, 0.06, 0.08, 0.95)
+	normal.border_width_left = 2
+	normal.border_width_right = 2
+	normal.border_width_top = 2
+	normal.border_width_bottom = 2
+	normal.border_color = Color(0.85, 0.2, 0.8)
+	normal.corner_radius_top_left = 6
+	normal.corner_radius_top_right = 6
+	normal.corner_radius_bottom_left = 6
+	normal.corner_radius_bottom_right = 6
+
+	var hover = normal.duplicate()
+	hover.bg_color = Color(0.15, 0.06, 0.16, 0.98)
+	hover.border_color = Color(1, 0.4, 0.95)
+
+	btn.add_theme_stylebox_override("normal", normal)
+	btn.add_theme_stylebox_override("hover", hover)
+	btn.add_theme_stylebox_override("pressed", hover)
+	btn.add_theme_stylebox_override("focus", normal)
+	btn.add_theme_color_override("font_color", Color(1, 1, 1))
+	btn.add_theme_color_override("font_hover_color", Color(1, 0.9, 1))
+	btn.add_theme_font_size_override("font_size", 22)
