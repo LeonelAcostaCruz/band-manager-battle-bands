@@ -1,0 +1,77 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://o7m2bvmvg3aa"]
+
+[ext_resource type="Texture2D" uid="uid://bldn58ait5lnm" path="res://assets/sprites/characters/Lider_Novatos.png" id="1_ytu8k"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sf0vn"]
+atlas = ExtResource("1_ytu8k")
+region = Rect2(512, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sul8o"]
+atlas = ExtResource("1_ytu8k")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r72f0"]
+atlas = ExtResource("1_ytu8k")
+region = Rect2(0, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dfjnm"]
+atlas = ExtResource("1_ytu8k")
+region = Rect2(512, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_um5on"]
+atlas = ExtResource("1_ytu8k")
+region = Rect2(1024, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_urqt2"]
+atlas = ExtResource("1_ytu8k")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tdj1d"]
+atlas = ExtResource("1_ytu8k")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ss6fd"]
+atlas = ExtResource("1_ytu8k")
+region = Rect2(1024, 0, 512, 512)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sf0vn")
+}],
+"loop": true,
+"name": &"ataque",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sul8o")
+}],
+"loop": true,
+"name": &"dano",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r72f0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dfjnm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_um5on")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_urqt2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tdj1d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ss6fd")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.0
+}]

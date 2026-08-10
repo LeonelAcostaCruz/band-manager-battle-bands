@@ -65,3 +65,42 @@ func aplicar_efecto(efecto: Dictionary, personaje: CharacterData):
 				personaje.resistencia += efecto[stat]
 			"velocidad":
 				personaje.velocidad += efecto[stat]
+				
+# ============================================================
+# AGREGAR a tu UpgradeSystem.gd (no reemplaza nada, solo se suma
+# a lo que ya tienes: MEJORAS, comprar_mejora, aplicar_efecto).
+# ============================================================
+
+# CAMBIO (nuevo): objetos especiales consumibles (requisito de la
+# rúbrica: "2 objetos especiales - vidas, armas, etc."). A diferencia
+# de MEJORAS (se compran una vez, son permanentes), estos se compran
+# varias veces y se consumen al usarse en batalla.
+const OBJETOS = {
+	"vida_extra": {
+		"nombre": "Vida Extra",
+		"descripcion": "Revive a un integrante caído (40% HP), o cura 40 HP si nadie cayó.",
+		"costo": 60,
+		"tipo": "revivir",
+	},
+	"carga_adrenalina": {
+		"nombre": "Carga de Adrenalina",
+		"descripcion": "Arma especial: energía al máximo y una ráfaga de daño instantáneo al rival.",
+		"costo": 70,
+		"tipo": "adrenalina",
+	},
+}
+
+# Compra una unidad de un objeto (se puede comprar varias veces).
+func comprar_objeto(id: String) -> bool:
+	if not OBJETOS.has(id):
+		return false
+
+	var objeto = OBJETOS[id]
+	if not GameData.gastar_prestigio(objeto["costo"]):
+		return false  # no hay suficiente prestigio
+
+	if not GameData.inventario.has(id):
+		GameData.inventario[id] = 0
+	GameData.inventario[id] += 1
+	GameData.guardar()
+	return true

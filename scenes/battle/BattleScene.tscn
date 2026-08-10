@@ -6,9 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://2s8ttrwiussh" path="res://assets/sprites/characters/CROW_HURT.png" id="3_nnhtb"]
 [ext_resource type="Texture2D" uid="uid://beohuwcpft3kc" path="res://assets/sprites/characters/rex_thunder.png" id="4_nabc4"]
 [ext_resource type="Texture2D" uid="uid://y2udj2a260et" path="res://assets/sprites/characters/CROW_IDLE_SING.png" id="4_nnhtb"]
-[ext_resource type="Texture2D" uid="uid://y247c4yhqc5a" path="res://assets/Enemigo — Líder de Los Novatos.jpg" id="6_nabc4"]
 [ext_resource type="Texture2D" uid="uid://df16dx2mqf2m1" path="res://assets/sprites/characters/blaze_inferno_sheet2.png" id="6_nnhtb"]
-[ext_resource type="Texture2D" uid="uid://xnh3l08ktve2" path="res://assets/sprites/characters/drummer4.png" id="8_nnhtb"]
+[ext_resource type="Texture2D" uid="uid://dmej7kdl6ti6a" path="res://assets/sprites/characters/SuperDurmer.png" id="8_nnhtb"]
+[ext_resource type="SpriteFrames" uid="uid://c86iso20127yk" path="res://resources/enemies/metal_excesivo.tres" id="9_nnhtb"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nnhtb"]
 atlas = ExtResource("2_nnhtb")
@@ -240,11 +240,27 @@ animations = [{
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nnkfw"]
 atlas = ExtResource("8_nnhtb")
-region = Rect2(516, 46, 509, 326)
+region = Rect2(512, 512, 512, 512)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_m8y27"]
 atlas = ExtResource("8_nnhtb")
-region = Rect2(1025, 46, 509, 326)
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_28k10"]
+atlas = ExtResource("8_nnhtb")
+region = Rect2(1024, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dhs18"]
+atlas = ExtResource("8_nnhtb")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c31q5"]
+atlas = ExtResource("8_nnhtb")
+region = Rect2(0, 512, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_13cqt"]
+atlas = ExtResource("8_nnhtb")
+region = Rect2(1024, 0, 512, 512)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_5b2op"]
 animations = [{
@@ -254,10 +270,22 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_m8y27")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_28k10")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dhs18")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c31q5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_13cqt")
 }],
 "loop": true,
 "name": &"idle",
-"speed": 3.0
+"speed": 6.0
 }]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1dyl0"]
@@ -284,6 +312,24 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 corner_detail = 6
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nnhtb"]
+bg_color = Color(0.6745098, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rpe18"]
+bg_color = Color(0, 0.019607844, 1, 0.4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vvcci"]
+bg_color = Color(0.6745098, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qcili"]
+bg_color = Color(0, 0.019607844, 1, 0.4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4ro08"]
+bg_color = Color(0.6745098, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5u8xp"]
+bg_color = Color(0, 0.019607844, 1, 0.4)
+
 [node name="BattleScene" type="Node2D" unique_id=837888185]
 script = ExtResource("1_1dyl0")
 
@@ -293,59 +339,61 @@ centered = false
 [node name="BandaJugador" type="Node2D" parent="." unique_id=577550237]
 
 [node name="CrowStorm" type="Node2D" parent="BandaJugador" unique_id=2076416914]
-position = Vector2(67, 169)
+position = Vector2(621, 402)
 scale = Vector2(0.45, 0.45)
 
 [node name="CrowStorm" type="AnimatedSprite2D" parent="BandaJugador/CrowStorm" unique_id=1068220668]
-position = Vector2(1195.815, 494.93707)
-scale = Vector2(0.85007745, 0.6515462)
+position = Vector2(-4.444418, 297.7778)
+scale = Vector2(0.744788, 0.6392755)
 sprite_frames = SubResource("SpriteFrames_vvcci")
-animation = &"fx"
+animation = &"ataque"
 
 [node name="BlazeInferno" type="Node2D" parent="BandaJugador" unique_id=936523048]
-position = Vector2(240, 185)
+position = Vector2(90, 400)
 scale = Vector2(0.45, 0.45)
 
 [node name="BlazeInferno" type="AnimatedSprite2D" parent="BandaJugador/BlazeInferno" unique_id=1284373116]
-position = Vector2(64.130936, 382.3333)
-scale = Vector2(0.69558215, 0.7759972)
+position = Vector2(-26.666672, 282.22223)
+scale = Vector2(0.7207514, 0.8545228)
 sprite_frames = SubResource("SpriteFrames_5u8xp")
 animation = &"idle"
 frame = 4
 frame_progress = 0.55333877
 
 [node name="RexThunder" type="Node2D" parent="BandaJugador" unique_id=618404535]
-position = Vector2(410, 190)
+position = Vector2(466, 400)
 scale = Vector2(0.45, 0.45)
 
 [node name="RexThunder" type="AnimatedSprite2D" parent="BandaJugador/RexThunder" unique_id=1710096073]
-position = Vector2(55.91126, 458.4253)
-scale = Vector2(0.6778845, 0.79727644)
+position = Vector2(17.777748, 295.5555)
+scale = Vector2(0.70571685, 0.8570174)
 sprite_frames = SubResource("SpriteFrames_d37c3")
 animation = &"idle"
 
 [node name="CrashDoom" type="Node2D" parent="BandaJugador" unique_id=646846876]
-position = Vector2(564, 157.00002)
+position = Vector2(260, 400)
 scale = Vector2(0.45, 0.45)
 
 [node name="CrashDoom" type="AnimatedSprite2D" parent="BandaJugador/CrashDoom" unique_id=491675857]
-position = Vector2(-1055.3396, 148.03177)
-scale = Vector2(0.8723229, 1.6412503)
+position = Vector2(40, 297.7778)
+scale = Vector2(1.0162745, 1.0630491)
 sprite_frames = SubResource("SpriteFrames_5b2op")
 animation = &"idle"
-frame = 1
-frame_progress = 0.68853766
+frame_progress = 0.08185273
 
 [node name="BandaEnemiga" type="Node2D" parent="." unique_id=253485869]
 
 [node name="Enemigo1" type="Node2D" parent="BandaEnemiga" unique_id=1213033290]
-position = Vector2(950, 150)
-scale = Vector2(0.45, 0.45)
+position = Vector2(995.00006, 399)
+scale = Vector2(0.55, 0.55)
 
-[node name="Enemigo1" type="Sprite2D" parent="BandaEnemiga/Enemigo1" unique_id=1559184962]
-position = Vector2(-184.44444, 246.66664)
-scale = Vector2(0.48741317, 0.46354163)
-texture = ExtResource("6_nabc4")
+[node name="Enemigo1" type="AnimatedSprite2D" parent="BandaEnemiga/Enemigo1" unique_id=838575741]
+position = Vector2(34.54536, 223.63635)
+scale = Vector2(1.2191465, 1.3172742)
+sprite_frames = ExtResource("9_nnhtb")
+animation = &"ataque"
+frame = 2
+frame_progress = 1.0
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1405840757]
 
@@ -365,10 +413,10 @@ offset_bottom = 28.0
 theme_override_font_sizes/font_size = 20
 
 [node name="AccionesPanel" type="VBoxContainer" parent="HUD" unique_id=847725538]
-offset_left = 25.443787
-offset_top = 405.80463
-offset_right = 205.44379
-offset_bottom = 627.8046
+offset_left = 28.311401
+offset_top = 25.63684
+offset_right = 208.3114
+offset_bottom = 247.63684
 pivot_offset = Vector2(180.3352, 1.5106812)
 size_flags_stretch_ratio = 0.37
 theme_override_constants/separation = 14
@@ -394,11 +442,17 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 14
 
 [node name="StatsPanel" type="VBoxContainer" parent="HUD" unique_id=80352066]
-custom_minimum_size = Vector2(600, 0)
-offset_left = 666.4269
-offset_top = 450.89893
-offset_right = 1266.4269
-offset_bottom = 627.6522
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -327.22693
+offset_top = -116.33183
+offset_right = 58.77307
+offset_bottom = 32.16809
+grow_horizontal = 2
+grow_vertical = 2
 pivot_offset = Vector2(284, 98)
 
 [node name="LabelJugadores" type="Label" parent="HUD/StatsPanel" unique_id=1644630750]
@@ -435,12 +489,14 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 14
 
 [node name="HPBlaze" type="ProgressBar" parent="HUD/StatsPanel/StatsBlaze" unique_id=2040974856]
-custom_minimum_size = Vector2(150, 22)
+custom_minimum_size = Vector2(120, 15)
 layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_nnhtb")
 
 [node name="EnergiaBlaze" type="ProgressBar" parent="HUD/StatsPanel/StatsBlaze" unique_id=1430615385]
-custom_minimum_size = Vector2(100, 22)
+custom_minimum_size = Vector2(100, 15)
 layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_rpe18")
 
 [node name="StatsRex" type="HBoxContainer" parent="HUD/StatsPanel" unique_id=772723328]
 layout_mode = 2
@@ -452,15 +508,18 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 14
 
 [node name="HPRex" type="ProgressBar" parent="HUD/StatsPanel/StatsRex" unique_id=182897065]
-custom_minimum_size = Vector2(150, 22)
+custom_minimum_size = Vector2(120, 15)
 layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_vvcci")
 
 [node name="EnergiaRex" type="ProgressBar" parent="HUD/StatsPanel/StatsRex" unique_id=1646872835]
-custom_minimum_size = Vector2(100, 22)
+custom_minimum_size = Vector2(100, 15)
 layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_qcili")
 
 [node name="StatsCrash" type="HBoxContainer" parent="HUD/StatsPanel" unique_id=1433059422]
 layout_mode = 2
+size_flags_stretch_ratio = 0.0
 theme_override_constants/separation = 8
 
 [node name="NombreCrash" type="Label" parent="HUD/StatsPanel/StatsCrash" unique_id=50158143]
@@ -469,12 +528,14 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 14
 
 [node name="HPCrash" type="ProgressBar" parent="HUD/StatsPanel/StatsCrash" unique_id=479509414]
-custom_minimum_size = Vector2(150, 22)
+custom_minimum_size = Vector2(120, 15)
 layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_4ro08")
 
 [node name="EnergiaCrash" type="ProgressBar" parent="HUD/StatsPanel/StatsCrash" unique_id=1965447996]
-custom_minimum_size = Vector2(100, 22)
+custom_minimum_size = Vector2(100, 15)
 layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_5u8xp")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1250405705]
 position = Vector2(577, 326)

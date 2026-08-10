@@ -3,6 +3,9 @@ class_name CharacterData
 extends Resource
 
 @export var sprite_path: String = ""
+# CAMBIO (nuevo): ruta a un SpriteFrames guardado (.tres) para enemigos
+# animados. Si está vacío, se usa sprite_path como textura estática.
+@export var frames_path: String = ""
 @export var nombre: String = ""
 @export var rol: String = ""
 @export var hp_max: int = 100
@@ -14,6 +17,4 @@ extends Resource
 @export var ritmo: int = 10
 @export var velocidad: int = 10
 @export var resistencia: int = 10
-
-# ← ESTA ES LA LÍNEA QUE FALTA
 @export var habilidades: Array[SkillData] = []

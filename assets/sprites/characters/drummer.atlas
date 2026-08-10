@@ -1,0 +1,53 @@
+drummer-0.png
+size: 1536, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+drumer2
+  bounds: 0, 0, 1536, 1024
+
+drummer-1.png
+size: 1536, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+drumer3
+  bounds: 0, 0, 1536, 1024
+
+drummer-2.png
+size: 1536, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+drummer 5
+  bounds: 0, 0, 1536, 1024
+
+drummer-3.png
+size: 1536, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+drummer
+  bounds: 0, 0, 1536, 1024
+
+drummer-4.png
+size: 1536, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+drummer6
+  bounds: 0, 0, 1536, 1024
+
+drummer-5.png
+size: 1536, 1024
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+pma: false
+dummer4
+  bounds: 0, 0, 1536, 1024

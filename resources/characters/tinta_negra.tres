@@ -6,11 +6,11 @@
 
 [resource]
 script = ExtResource("2_y7nup")
-sprite_path = "res://assets/sprites/characters/Tinta Negra.jpg"
+frames_path = "res://resources/enemies/tinta_negra.tres"
 nombre = "Tinta Negra"
 rol = "enemigo"
-hp_max = 120
-hp_actual = 120
+hp_max = 220
+hp_actual = 220
 energia_max = 90
 energia_actual = 90
 tecnica = 12
