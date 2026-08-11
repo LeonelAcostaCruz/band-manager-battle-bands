@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://g6qhy33xhjs6"]
 
-[ext_resource type="Script" uid="uid://dqv7vj8qdxrdi" path="res://scenes/ui/upgradeShop.gd" id="1_xkvne"]
+[ext_resource type="Script" path="res://scenes/ui/upgradeshop.gd" id="1_xkvne"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_xkvne"]
 color = Color(0.9529412, 0, 0, 1)
@@ -40,10 +40,10 @@ text = "🛒 TIENDA DE MEJORAS"
 [node name="PrestigioLabel" type="Label" parent="." unique_id=1115782487]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 0
-offset_left = 126.0
-offset_top = 87.0
-offset_right = 233.0
-offset_bottom = 167.0
+offset_left = 901.0
+offset_top = 32.0
+offset_right = 1008.0
+offset_bottom = 114.0
 theme_override_font_sizes/font_size = 20
 text = "Prestigio: 0"
 
@@ -68,10 +68,10 @@ layout_mode = 2
 
 [node name="BtnVolber" type="Button" parent="." unique_id=1692941673]
 layout_mode = 0
-offset_left = 51.0
-offset_top = 32.0
-offset_right = 138.0
-offset_bottom = 63.0
+offset_left = 35.0
+offset_top = 28.0
+offset_right = 122.0
+offset_bottom = 59.0
 text = "← VOLVER"
 
 [connection signal="pressed" from="BtnVolber" to="." method="_on_btn_volber_pressed"]

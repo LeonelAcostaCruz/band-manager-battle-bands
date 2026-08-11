@@ -1,4 +1,5 @@
 extends Node
+
 const MEJORAS = {
 	"guitarra_distortion_x": {
 		"nombre": "Guitarra Distortion X",
@@ -37,20 +38,41 @@ const MEJORAS = {
 	}
 }
 
+# CAMBIO (nuevo): objetos especiales consumibles (requisito de la
+# rúbrica: "2 objetos especiales - vidas, armas, etc."). A diferencia
+# de MEJORAS (se compran una vez, son permanentes), estos se compran
+# varias veces y se consumen al usarse en batalla.
+const OBJETOS = {
+	"vida_extra": {
+		"nombre": "Vida Extra",
+		"descripcion": "Revive a un integrante caído (40% HP), o cura 40 HP si nadie cayó.",
+		"costo": 60,
+		"tipo": "revivir",
+	},
+	"carga_adrenalina": {
+		"nombre": "Carga de Adrenalina",
+		"descripcion": "Energía al máximo, ráfaga de daño al rival y lo ATURDE (pierde su próximo turno).",
+		"costo": 70,
+		"tipo": "adrenalina",
+	},
+}
+
+
 func comprar_mejora(id: String, personaje: CharacterData) -> bool:
 	if not MEJORAS.has(id):
 		return false
 	if id in GameData.mejoras_compradas:
 		return false  # ya comprada
-	
+
 	var mejora = MEJORAS[id]
 	if not GameData.gastar_prestigio(mejora["costo"]):
 		return false  # no hay suficiente prestigio
-	
+
 	aplicar_efecto(mejora["efecto"], personaje)
 	GameData.mejoras_compradas.append(id)
 	GameData.guardar()
 	return true
+
 
 func aplicar_efecto(efecto: Dictionary, personaje: CharacterData):
 	for stat in efecto:
@@ -65,30 +87,7 @@ func aplicar_efecto(efecto: Dictionary, personaje: CharacterData):
 				personaje.resistencia += efecto[stat]
 			"velocidad":
 				personaje.velocidad += efecto[stat]
-				
-# ============================================================
-# AGREGAR a tu UpgradeSystem.gd (no reemplaza nada, solo se suma
-# a lo que ya tienes: MEJORAS, comprar_mejora, aplicar_efecto).
-# ============================================================
 
-# CAMBIO (nuevo): objetos especiales consumibles (requisito de la
-# rúbrica: "2 objetos especiales - vidas, armas, etc."). A diferencia
-# de MEJORAS (se compran una vez, son permanentes), estos se compran
-# varias veces y se consumen al usarse en batalla.
-const OBJETOS = {
-	"vida_extra": {
-		"nombre": "Vida Extra",
-		"descripcion": "Revive a un integrante caído (40% HP), o cura 40 HP si nadie cayó.",
-		"costo": 60,
-		"tipo": "revivir",
-	},
-	"carga_adrenalina": {
-		"nombre": "Carga de Adrenalina",
-		"descripcion": "Arma especial: energía al máximo y una ráfaga de daño instantáneo al rival.",
-		"costo": 70,
-		"tipo": "adrenalina",
-	},
-}
 
 # Compra una unidad de un objeto (se puede comprar varias veces).
 func comprar_objeto(id: String) -> bool:

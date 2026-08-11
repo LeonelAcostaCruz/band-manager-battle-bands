@@ -10,7 +10,7 @@ var ultimo_resultado_victoria: bool = true
 var inventario: Dictionary = {}
 
 const NIVELES = {
-	1: {"nombre": "Garage",               "enemigo": "res://resources/characters/los_novatos.tres",      "prestigio": 50,  "fondo": "res://assets/sprites/backgrounds/bg_garage.jpg", "musica": "res://assets/audio/music/nivel1.mp3"},
+	1: {"nombre": "Garage",               "enemigo": "res://resources/characters/los_novatos.tres",      "prestigio": 50,  "fondo": "res://assets/sprites/backgrounds/bg_garage.png", "musica": "res://assets/audio/music/nivel1.mp3"},
 	2: {"nombre": "Bar Local",            "enemigo": "res://resources/characters/ruido_callejero.tres",  "prestigio": 75,  "fondo": "res://assets/sprites/backgrounds/bg_bar_local.jpg", "musica": "res://assets/audio/music/nivel2.mp3"},
 	3: {"nombre": "Escuela de Arte",      "enemigo": "res://resources/characters/tinta_negra.tres",      "prestigio": 100, "fondo": "res://assets/sprites/backgrounds/bg_escuela_arte.jpg", "musica": "res://assets/audio/music/nivel3.mp3"},
 	4: {"nombre": "Callejon Underground", "enemigo": "res://resources/characters/soul_breaker.tres",     "prestigio": 150, "fondo": "res://assets/sprites/backgrounds/bg_callejon.jpg", "musica": "res://assets/audio/music/nivel4.mp3", "jefe": true},

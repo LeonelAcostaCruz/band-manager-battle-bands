@@ -52,6 +52,7 @@ var hype: int = 50
 var turno_jugador: bool = true
 var turno_indicador: Node = null
 var turno_indicador_tween: Tween = null
+var turno_spot: Node = null
 var pulso_tweens: Dictionary = {}
 
 # CAMBIO (nuevo): estado del mini-juego QTE (requisito de "colisiones").
@@ -64,6 +65,13 @@ var qte_velocidad: float = 260.0
 # CAMBIO (nuevo): candado para evitar doble clic / doble acción durante
 # el turno del jugador (esto era lo que causaba prestigio duplicado).
 var accion_en_curso: bool = false
+
+# CAMBIO (nuevo): si es true, el enemigo pierde su próximo turno
+# (lo activa la Carga de Adrenalina).
+var enemigo_aturdido: bool = false
+
+# CAMBIO (nuevo): barra de HP flotante del enemigo.
+var enemigo_hp_bar: ProgressBar = null
 
 @onready var hype_bar = $HUD/HypeBar
 @onready var turno_label = $HUD/TurnoLabel
@@ -98,16 +106,16 @@ var music_player: AudioStreamPlayer = null
 
 # CAMBIO: tamaños del HUD flotante. AJUSTA ESTOS 3 para el grosor/ancho.
 const ANCHO_BARRA_FLOTANTE = 96.0
-const ALTO_BARRA_HP = 0.1        # grosor barra de vida (más chico = más delgada)
-const ALTO_BARRA_ENERGIA = 0.1 # grosor barra de energía
+const ALTO_BARRA_HP = 7.0        # grosor barra de vida (más chico = más delgada, mín útil ~4)
+const ALTO_BARRA_ENERGIA = 5.0   # grosor barra de energía
 const FUENTE_NOMBRE = 13
 const MARGEN_SOBRE_CABEZA = 10.0
-const ALTO_GRUPO_STATS = -120.0
+const ALTO_GRUPO_STATS = -100.0
 # Separaciones verticales dentro del grupo (nombre / hp / energía)
 const OFF_NOMBRE = 0.0
 const OFF_HP = 19.0
-const OFF_ENERGIA = 50.0
-const ALTO_PANEL_STATS = 54.0
+const OFF_ENERGIA = 31.0
+const ALTO_PANEL_STATS = 44.0
 
 # CAMBIO (nuevo): paleta Battle Bands para el HUD.
 const COLOR_HP = Color(0.9, 0.15, 0.25)          # rojo (solo para HP)
@@ -231,6 +239,21 @@ func _ready():
 
 	hype_bar.max_value = 100
 	hype_bar.value = hype
+	# CAMBIO (nuevo): estilo Battle Bands para la barra de Hype.
+	hype_bar.show_percentage = false
+	hype_bar.add_theme_stylebox_override("background", _estilo_barra_fondo())
+	hype_bar.add_theme_stylebox_override("fill", _estilo_barra_fill(Color(1, 0.4, 0.9)))
+	if not hype_bar.has_node("HypeLabel"):
+		var hype_lbl = Label.new()
+		hype_lbl.name = "HypeLabel"
+		hype_lbl.text = "⚡ HYPE"
+		hype_lbl.add_theme_font_size_override("font_size", 14)
+		hype_lbl.add_theme_color_override("font_color", Color(1, 1, 1))
+		hype_lbl.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+		hype_lbl.add_theme_constant_override("outline_size", 4)
+		hype_lbl.position = Vector2(8, -2)
+		hype_bar.add_child(hype_lbl)
+
 	$HUD/AccionesPanel/BtnRecuperar.text = "♥ Recuperar Energia"
 
 	# CAMBIO (nuevo): botón de objetos especiales, creado por código si
@@ -245,6 +268,19 @@ func _ready():
 	if not btn_objetos.pressed.is_connected(_on_btn_objetos_pressed):
 		btn_objetos.pressed.connect(_on_btn_objetos_pressed)
 
+	# CAMBIO (nuevo): botón de Golpe de Multitud (ultimate de Hype).
+	# Solo aparece cuando el Hype está al 100%.
+	var btn_hype = get_node_or_null("HUD/AccionesPanel/BtnHype")
+	if btn_hype == null:
+		btn_hype = Button.new()
+		btn_hype.name = "BtnHype"
+		btn_hype.custom_minimum_size = Vector2(150, 50)
+		acciones_panel.add_child(btn_hype)
+	btn_hype.text = "🔥 GOLPE DE MULTITUD"
+	btn_hype.visible = false
+	if not btn_hype.pressed.is_connected(_on_golpe_multitud_pressed):
+		btn_hype.pressed.connect(_on_golpe_multitud_pressed)
+
 	# CAMBIO (nuevo): estilo Battle Bands para todos los botones del
 	# menú de acciones (panel oscuro, borde magenta, hover con glow).
 	for boton in acciones_panel.get_children():
@@ -255,6 +291,10 @@ func _ready():
 
 	reubicar_stats_en_personajes()
 	ajustar_sprite_enemigo()
+	crear_barra_enemigo(enemigo)
+
+	# CAMBIO (nuevo): transición de entrada al venue (fade + nombre del lugar).
+	transicion_entrada(nivel_data["nombre"])
 
 	# CAMBIO (nuevo): banner de "JEFE" si el nivel lo marca. Agrega
 	# "jefe": true a la entrada correspondiente en GameData.NIVELES.
@@ -264,6 +304,53 @@ func _ready():
 	await get_tree().create_timer(1.5).timeout
 	iniciar_turno()
 	actualizar_stats()
+
+
+# CAMBIO (nuevo): color de acento por nivel, para el rim light del enemigo
+# y detalles del venue. Si el nivel no está aquí, usa el default magenta.
+const COLOR_VENUE = {
+	1: Color(0.8, 0.3, 1.0),   # Garage - morado
+	2: Color(1.0, 0.3, 0.7),   # Bar Local - rosa
+	3: Color(0.3, 0.7, 1.0),   # Escuela de Arte - azul
+	4: Color(0.6, 0.2, 1.0),   # Callejón - violeta
+	5: Color(1.0, 0.2, 0.3),   # Club - rojo
+}
+
+func color_venue() -> Color:
+	return COLOR_VENUE.get(GameData.nivel_actual, Color(0.85, 0.2, 0.8))
+
+
+# CAMBIO (nuevo): fade negro que se abre + nombre del venue entrando,
+# para que el cambio de escenario se sienta intencional.
+func transicion_entrada(nombre_venue: String):
+	var capa = CanvasLayer.new()
+	capa.layer = 85
+	add_child(capa)
+
+	var negro = ColorRect.new()
+	negro.color = Color(0, 0, 0, 1)
+	negro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	negro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	capa.add_child(negro)
+
+	var viewport_size = get_viewport().get_visible_rect().size
+	var etiqueta = Label.new()
+	etiqueta.text = nombre_venue.to_upper()
+	etiqueta.add_theme_font_size_override("font_size", 52)
+	etiqueta.add_theme_color_override("font_color", color_venue())
+	etiqueta.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	etiqueta.add_theme_constant_override("outline_size", 8)
+	etiqueta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	etiqueta.set_anchors_preset(Control.PRESET_FULL_RECT)
+	etiqueta.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	capa.add_child(etiqueta)
+
+	var tween = create_tween()
+	# el negro se abre
+	tween.tween_property(negro, "color", Color(0, 0, 0, 0), 0.6).set_delay(0.3)
+	# el nombre del venue se desvanece un poco después
+	tween.parallel().tween_property(etiqueta, "modulate:a", 0.0, 0.5).set_delay(0.9)
+	tween.tween_callback(capa.queue_free)
 
 
 # Reproduce idle solo en los sprites que son AnimatedSprite2D
@@ -340,6 +427,10 @@ func reubicar_stats_en_personajes():
 		hp_bar.global_position = sprite.global_position + Vector2(-ANCHO_BARRA_FLOTANTE / 2.0, y_base - ALTO_GRUPO_STATS + OFF_HP)
 		hp_bar.z_index = 50
 		hp_bar.show_percentage = false
+		# CAMBIO: la fuente interna del ProgressBar impone un alto mínimo
+		# (~40px) aunque ocultes el %. Forzándola a 1px, ALTO_BARRA_HP sí
+		# controla el grosor real de la barra.
+		hp_bar.add_theme_font_size_override("font_size", 1)
 		hp_bar.add_theme_stylebox_override("background", _estilo_barra_fondo())
 		hp_bar.add_theme_stylebox_override("fill", _estilo_barra_fill(COLOR_HP))
 
@@ -348,6 +439,7 @@ func reubicar_stats_en_personajes():
 		energia_bar.global_position = sprite.global_position + Vector2(-ANCHO_BARRA_FLOTANTE / 2.0, y_base - ALTO_GRUPO_STATS + OFF_ENERGIA)
 		energia_bar.z_index = 50
 		energia_bar.show_percentage = false
+		energia_bar.add_theme_font_size_override("font_size", 1)
 		energia_bar.add_theme_stylebox_override("background", _estilo_barra_fondo())
 		energia_bar.add_theme_stylebox_override("fill", _estilo_barra_fill(COLOR_ENERGIA))
 
@@ -414,6 +506,108 @@ func ajustar_sprite_enemigo():
 		sprite_enemigo.scale = Vector2(escala, escala)
 
 	agregar_sombra_enemigo()
+	agregar_rim_light_enemigo()
+
+
+# CAMBIO (nuevo): glow de borde (rim light) detrás del enemigo, del color
+# del venue, para integrarlo al escenario en vez de verse recortado.
+func agregar_rim_light_enemigo():
+	if sprite_enemigo == null:
+		return
+	var padre = sprite_enemigo.get_parent()
+	if padre == null or padre.has_node("RimLightEnemigo"):
+		return
+
+	var c = color_venue()
+	var grad = Gradient.new()
+	grad.colors = PackedColorArray([Color(c.r, c.g, c.b, 0.5), Color(c.r, c.g, c.b, 0.0)])
+	grad.offsets = PackedFloat32Array([0.0, 1.0])
+	var gtex = GradientTexture2D.new()
+	gtex.gradient = grad
+	gtex.fill = GradientTexture2D.FILL_RADIAL
+	gtex.fill_from = Vector2(0.5, 0.5)
+	gtex.fill_to = Vector2(1.0, 0.5)
+	gtex.width = 256
+	gtex.height = 256
+
+	var rim = Sprite2D.new()
+	rim.name = "RimLightEnemigo"
+	rim.texture = gtex
+	rim.scale = Vector2(2.2, 3.0)
+	rim.position = sprite_enemigo.position
+	rim.z_index = sprite_enemigo.z_index - 1
+
+	padre.add_child(rim)
+	padre.move_child(rim, sprite_enemigo.get_index())
+
+	# pulso lento
+	var tw = create_tween()
+	tw.set_loops()
+	tw.tween_property(rim, "modulate:a", 0.6, 1.4).set_trans(Tween.TRANS_SINE)
+	tw.tween_property(rim, "modulate:a", 1.0, 1.4).set_trans(Tween.TRANS_SINE)
+
+
+# CAMBIO (nuevo): barra de HP flotante sobre el enemigo, con su nombre.
+# Más ancha que las de la banda porque el enemigo es más grande.
+func crear_barra_enemigo(enemigo):
+	if sprite_enemigo == null or enemigo == null:
+		return
+	if sprite_enemigo.has_node("EnemigoNombre"):
+		return  # ya creada
+
+	var ancho = 180.0
+	var borde_superior = obtener_borde_superior_y(sprite_enemigo)
+	var origen = sprite_enemigo.global_position + Vector2(-ancho / 2.0, borde_superior - -130)
+
+	# Panel de fondo
+	var fondo = Panel.new()
+	fondo.name = "EnemigoFondo"
+	var sb_fondo = StyleBoxFlat.new()
+	sb_fondo.bg_color = Color(0, 0, 0, 0.55)
+	sb_fondo.border_width_left = 1
+	sb_fondo.border_width_right = 1
+	sb_fondo.border_width_top = 1
+	sb_fondo.border_width_bottom = 1
+	sb_fondo.border_color = Color(0.9, 0.2, 0.25, 0.7)
+	sb_fondo.corner_radius_top_left = 5
+	sb_fondo.corner_radius_top_right = 5
+	sb_fondo.corner_radius_bottom_left = 5
+	sb_fondo.corner_radius_bottom_right = 5
+	fondo.add_theme_stylebox_override("panel", sb_fondo)
+	fondo.size = Vector2(ancho + 14, 44)
+	fondo.top_level = true
+	fondo.global_position = origen + Vector2(-7, -4)
+	fondo.z_index = 49
+	sprite_enemigo.add_child(fondo)
+
+	# Nombre
+	var nombre = Label.new()
+	nombre.name = "EnemigoNombre"
+	nombre.text = enemigo.nombre.to_upper()
+	nombre.add_theme_font_size_override("font_size", 16)
+	nombre.add_theme_color_override("font_color", Color(1, 0.85, 0.85))
+	nombre.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	nombre.add_theme_constant_override("outline_size", 4)
+	nombre.top_level = true
+	nombre.global_position = origen
+	nombre.z_index = 50
+	sprite_enemigo.add_child(nombre)
+
+	# Barra de HP
+	enemigo_hp_bar = ProgressBar.new()
+	enemigo_hp_bar.name = "EnemigoHP"
+	enemigo_hp_bar.max_value = enemigo.hp_max
+	enemigo_hp_bar.value = enemigo.hp_actual
+	enemigo_hp_bar.show_percentage = false
+	enemigo_hp_bar.add_theme_font_size_override("font_size", 1)
+	enemigo_hp_bar.add_theme_stylebox_override("background", _estilo_barra_fondo())
+	enemigo_hp_bar.add_theme_stylebox_override("fill", _estilo_barra_fill(COLOR_HP))
+	enemigo_hp_bar.custom_minimum_size = Vector2(ancho, 12)
+	enemigo_hp_bar.size = Vector2(ancho, 12)
+	enemigo_hp_bar.top_level = true
+	enemigo_hp_bar.global_position = origen + Vector2(0, 24)
+	enemigo_hp_bar.z_index = 50
+	sprite_enemigo.add_child(enemigo_hp_bar)
 
 
 func agregar_sombra_enemigo():
@@ -484,8 +678,17 @@ func iniciar_turno():
 		accion_en_curso = false
 		var personaje = banda_jugador[turno_index]
 		turno_label.text = "Turno de: " + personaje.nombre
+		anunciar_turno(personaje.nombre)
 		acciones_panel.visible = true
 		actualizar_botones(personaje)
+		actualizar_boton_hype()
+		# CAMBIO: el botón de recuperar cambia para Crash Doom (cura banda)
+		var btn_rec = get_node_or_null("HUD/AccionesPanel/BtnRecuperar")
+		if btn_rec != null:
+			if personaje == crash_doom:
+				btn_rec.text = "♥ Sanar Banda +30"
+			else:
+				btn_rec.text = "♥ Recuperar Energia"
 	else:
 		acciones_panel.visible = false
 		turno_label.text = "Turno enemigo..."
@@ -540,6 +743,7 @@ func usar_habilidad(indice: int):
 			reproducir_anim(sprite_atacante, "ataque", 0.4)
 			reproducir_sfx_ataque(turno_index)
 			trail_durante_animacion(sprite_atacante, 0.35)
+			await fx_ataque_personaje(turno_index, sprite_atacante, sprite_enemigo)
 			zoom_punch(0.25, 0.10)
 			await hit_stop(0.08, 0.05)
 			reproducir_sfx_impacto(SFX_IMPACTO_ATAQUE, sprite_enemigo)
@@ -547,6 +751,7 @@ func usar_habilidad(indice: int):
 			flash_dano(sprite_enemigo, Color(1, 0, 0, 1))
 			spawn_impact_particles(sprite_enemigo, Color(1, 0.3, 0.1))
 			spawn_slash(sprite_enemigo, Color(1, 0.9, 0.7, 0.9))
+			mega_impacto(sprite_enemigo, Color(1, 0.4, 0.1), 2)
 			spawn_damage_number(sprite_enemigo, ("¡PERFECT! -" if qte_calidad == "perfect" else "-") + str(cantidad), Color(1, 0.9, 0.2) if qte_calidad == "perfect" else Color(1, 0.3, 0.1))
 			squash_stretch(sprite_enemigo)
 			knockback(sprite_enemigo, Vector2.RIGHT)
@@ -557,6 +762,9 @@ func usar_habilidad(indice: int):
 			reproducir_anim(sprite_atacante, "ataque", 0.4)
 			reproducir_sfx_ataque(turno_index)
 			trail_durante_animacion(sprite_atacante, 0.35, Color(1, 0.85, 0.3, 0.4))
+			await fx_ataque_personaje(turno_index, sprite_atacante, sprite_enemigo)
+			spawn_shockwave(sprite_enemigo, Color(1, 0.85, 0.2))
+			spawn_rayo(sprite_atacante, sprite_enemigo, Color(1, 0.9, 0.4))
 			zoom_punch(0.35, 0.18)
 			await hit_stop(0.09, 0.03)
 			reproducir_sfx_impacto(SFX_IMPACTO_CRITICO, sprite_enemigo)
@@ -564,6 +772,7 @@ func usar_habilidad(indice: int):
 			flash_dano(sprite_enemigo, Color(1, 0.5, 0, 1))
 			spawn_impact_particles(sprite_enemigo, Color(1, 0.85, 0.1))
 			spawn_slash(sprite_enemigo, Color(1, 0.85, 0.2, 1.0), 3)
+			mega_impacto(sprite_enemigo, Color(1, 0.85, 0.2), 4)
 			spawn_damage_number(sprite_enemigo, "-" + str(cantidad) + "!", Color(1, 0.85, 0.1))
 			squash_stretch(sprite_enemigo)
 			knockback(sprite_enemigo, Vector2.RIGHT)
@@ -602,6 +811,19 @@ func turno_enemigo():
 	if enemigo.hp_actual <= 0:
 		return
 
+	# CAMBIO (nuevo): si está aturdido (Carga de Adrenalina), pierde el
+	# turno y se lo devuelve al jugador.
+	if enemigo_aturdido:
+		enemigo_aturdido = false
+		turno_label.text = enemigo.nombre + " está aturdido... ¡pierde el turno!"
+		spawn_damage_number(sprite_enemigo, "💫 ATURDIDO", Color(1, 0.9, 0.4))
+		var tw = create_tween()
+		tw.tween_property(sprite_enemigo, "modulate", Color(0.7, 0.7, 1.0), 0.3)
+		tw.tween_property(sprite_enemigo, "modulate", Color(1, 1, 1), 0.3)
+		await get_tree().create_timer(1.4).timeout
+		verificar_batalla(true)
+		return
+
 	# CAMBIO: el enemigo solo puede apuntar a miembros vivos.
 	var vivos = []
 	for i in range(banda_jugador.size()):
@@ -625,6 +847,11 @@ func turno_enemigo():
 
 	var sprites_banda = [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]
 	var sprite_objetivo = sprites_banda[objetivo_index]
+
+	# CAMBIO (nuevo): FX de ataque del enemigo hacia el objetivo (energía
+	# oscura + onda de choque al impactar).
+	await spawn_proyectil(sprite_enemigo, sprite_objetivo, Color(0.7, 0.15, 0.85), 2)
+	spawn_shockwave(sprite_objetivo, Color(0.7, 0.15, 0.85))
 
 	reproducir_anim(sprite_objetivo, "dano", 0.4)
 	await hit_stop(0.05, 0.05)
@@ -653,20 +880,27 @@ func verificar_batalla(turno_jugador_siguiente: bool = false):
 		acciones_panel.visible = false
 		reproducir_sfx_ui(SFX_VICTORIA)
 		fade_out_musica(1.5)
+		enemigo_derrotado_visual()  # CAMBIO: el enemigo cae/se apaga
 		for sprite in [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]:
 			spawn_confetti(sprite)
 
 		var prestigio_ganado = nivel_data["prestigio"]
 		var fans_ganados = prestigio_ganado * 2 + hype
+		# CAMBIO: detectar si este era el jefe final (nivel 5) ANTES de
+		# tocar nivel_actual, para mostrar créditos en vez de "continuar".
+		var era_final = GameData.nivel_actual >= 5
+
 		GameData.ultimo_resultado_victoria = true
 		GameData.ganar_prestigio(prestigio_ganado)
 		if GameData.nivel_actual < 5:
 			GameData.nivel_actual += 1
 		GameData.guardar()
 
-		# CAMBIO: pantalla de victoria SOBRE el escenario (no negro).
-		await get_tree().create_timer(1.0).timeout
-		mostrar_victoria_en_escena(prestigio_ganado, fans_ganados)
+		await get_tree().create_timer(1.2).timeout
+		if era_final:
+			mostrar_creditos()
+		else:
+			mostrar_victoria_en_escena(prestigio_ganado, fans_ganados)
 		return
 
 	var todos_caidos = banda_jugador.all(func(m): return m.hp_actual <= 0)
@@ -709,6 +943,11 @@ func actualizar_stats():
 	tween_bar(energia_crash, crash_doom.energia_actual)
 	energia_crash.max_value = crash_doom.energia_max
 
+	# CAMBIO: barra de HP del enemigo
+	if enemigo_hp_bar != null and banda_enemiga.size() > 0:
+		enemigo_hp_bar.max_value = banda_enemiga[0].hp_max
+		tween_bar(enemigo_hp_bar, banda_enemiga[0].hp_actual)
+
 	actualizar_pulso_hp()
 
 
@@ -737,16 +976,33 @@ func _on_btn_recuperar_pressed():
 	var sprites_banda = [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]
 	var sprite_actual = sprites_banda[turno_index]
 
-	personaje.energia_actual = min(
-		personaje.energia_actual + 30,
-		personaje.energia_max
-	)
-	turno_label.text = personaje.nombre + " recupero energia!"
-	reproducir_anim(sprite_actual, "recuperar", 0.4)
-	reproducir_sfx_ui(SFX_RECUPERAR)
-	flash_dano(sprite_actual, Color(0, 0.5, 1, 1))
-	spawn_impact_particles(sprite_actual, Color(0.2, 0.6, 1))
-	spawn_damage_number(sprite_actual, "+30 energia", Color(0.2, 0.6, 1))
+	# CAMBIO: Crash Doom (baterista) cura 30 HP a TODA la banda en vez
+	# de recuperar energía (su "redoble sanador").
+	if personaje == crash_doom:
+		turno_label.text = crash_doom.nombre + " ¡sana a toda la banda!"
+		reproducir_anim(sprite_actual, "recuperar", 0.4)
+		reproducir_sfx_ui(SFX_RECUPERAR)
+		for i in range(banda_jugador.size()):
+			var miembro = banda_jugador[i]
+			if miembro.hp_actual <= 0:
+				continue  # no revive caídos, solo cura vivos
+			miembro.hp_actual = min(miembro.hp_actual + 30, miembro.hp_max)
+			flash_dano(sprites_banda[i], Color(0.3, 1, 0.4))
+			spawn_impact_particles(sprites_banda[i], Color(0.3, 1, 0.4))
+			spawn_damage_number(sprites_banda[i], "+30 HP", Color(0.3, 1, 0.4))
+		flash_pantalla(Color(0.3, 1, 0.4, 0.18), 0.3)
+	else:
+		personaje.energia_actual = min(
+			personaje.energia_actual + 30,
+			personaje.energia_max
+		)
+		turno_label.text = personaje.nombre + " recupero energia!"
+		reproducir_anim(sprite_actual, "recuperar", 0.4)
+		reproducir_sfx_ui(SFX_RECUPERAR)
+		flash_dano(sprite_actual, Color(0, 0.5, 1, 1))
+		spawn_impact_particles(sprite_actual, Color(0.2, 0.6, 1))
+		spawn_damage_number(sprite_actual, "+30 energia", Color(0.2, 0.6, 1))
+
 	actualizar_stats()
 
 	await get_tree().create_timer(1.0).timeout
@@ -857,6 +1113,87 @@ func _on_btn_objetos_pressed():
 	panel.add_child(btn_cerrar)
 
 
+# CAMBIO (nuevo): muestra/oculta el botón de Golpe de Multitud según el
+# Hype. Cuando está al 100%, la barra de Hype también pulsa.
+func actualizar_boton_hype():
+	var btn_hype = get_node_or_null("HUD/AccionesPanel/BtnHype")
+	if btn_hype == null:
+		return
+	var lleno = hype >= 100 and turno_jugador and not accion_en_curso
+	btn_hype.visible = lleno
+	if lleno:
+		if hype_bar.has_meta("pulso"):
+			return  # ya está pulsando, no apilar otro tween
+		var tw = create_tween()
+		tw.set_loops()
+		tw.tween_property(hype_bar, "modulate", Color(1.4, 1.0, 1.4), 0.4).set_trans(Tween.TRANS_SINE)
+		tw.tween_property(hype_bar, "modulate", Color(1, 1, 1), 0.4).set_trans(Tween.TRANS_SINE)
+		hype_bar.set_meta("pulso", tw)
+	else:
+		if hype_bar.has_meta("pulso"):
+			var tw = hype_bar.get_meta("pulso")
+			if tw != null and tw.is_valid():
+				tw.kill()
+			hype_bar.remove_meta("pulso")
+			hype_bar.modulate = Color(1, 1, 1)
+
+
+# CAMBIO (nuevo): ultimate de la banda. Toda la banda golpea al enemigo
+# de golpe, con FX grande, y consume todo el Hype.
+func _on_golpe_multitud_pressed():
+	if accion_en_curso or hype < 100:
+		return
+	accion_en_curso = true
+	acciones_panel.visible = false
+	var btn_hype = get_node_or_null("HUD/AccionesPanel/BtnHype")
+	if btn_hype != null:
+		btn_hype.visible = false
+
+	var enemigo = banda_enemiga[0]
+	var sprites_banda = [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]
+
+	turno_label.text = "¡GOLPE DE MULTITUD!"
+	reproducir_sfx_ui(SFX_VICTORIA)  # rugido/hype de la multitud
+	mostrar_vineta(0.6, 0.5)
+
+	# Cada miembro vivo dispara al enemigo en cadena
+	var total = 0
+	for i in range(banda_jugador.size()):
+		if banda_jugador[i].hp_actual <= 0:
+			continue
+		var atacante = banda_jugador[i]
+		var dano = 25 + atacante.tecnica
+		total += dano
+		reproducir_anim(sprites_banda[i], "ataque", 0.3)
+		reproducir_sfx_ataque(i)
+		await spawn_proyectil(sprites_banda[i], sprite_enemigo, color_venue(), 2)
+
+	enemigo.hp_actual = max(enemigo.hp_actual - total, 0)
+
+	# Impacto final gordo
+	reproducir_sfx_impacto(SFX_IMPACTO_CRITICO, sprite_enemigo)
+	reproducir_anim(sprite_enemigo, "dano", 0.4)
+	await hit_stop(0.12, 0.03)
+	flash_dano(sprite_enemigo, Color(1, 0.3, 1, 1))
+	spawn_impact_particles(sprite_enemigo, color_venue())
+	spawn_slash(sprite_enemigo, Color(1, 0.5, 1, 1), 5)
+	mega_impacto(sprite_enemigo, Color(1, 0.4, 1), 5)
+	spawn_damage_number(sprite_enemigo, "-" + str(total) + "!!", Color(1, 0.4, 1))
+	squash_stretch(sprite_enemigo)
+	knockback(sprite_enemigo, Vector2.RIGHT)
+	shake_camera(0.5, 14.0)
+	zoom_punch(0.4, 0.2)
+
+	# Consumir el Hype
+	hype = 0
+	tween_bar(hype_bar, hype)
+	actualizar_boton_hype()
+	actualizar_stats()
+
+	await get_tree().create_timer(1.2).timeout
+	verificar_batalla()
+
+
 func _on_usar_objeto_pressed(id: String, capa: CanvasLayer):
 	if accion_en_curso:
 		return
@@ -898,12 +1235,15 @@ func _on_usar_objeto_pressed(id: String, capa: CanvasLayer):
 			var enemigo = banda_enemiga[0]
 			var cantidad_dano = 25
 			enemigo.hp_actual = max(enemigo.hp_actual - cantidad_dano, 0)
-			turno_label.text = "¡Carga de Adrenalina!"
+			turno_label.text = "¡Carga de Adrenalina! El rival queda aturdido."
 			reproducir_sfx_impacto(SFX_IMPACTO_CRITICO, sprite_enemigo)
 			flash_dano(sprite_enemigo, Color(1, 0.9, 0.2, 1))
 			spawn_impact_particles(sprite_enemigo, Color(1, 0.9, 0.2))
 			spawn_damage_number(sprite_enemigo, "-" + str(cantidad_dano), Color(1, 0.9, 0.2))
 			shake_camera(0.3, 8.0)
+			# CAMBIO (nuevo): además, aturde al enemigo un turno.
+			enemigo_aturdido = true
+			spawn_damage_number(sprite_enemigo, "¡ATURDIDO!", Color(1, 0.85, 0.2))
 			actualizar_stats()
 
 	capa.queue_free()
@@ -1012,6 +1352,11 @@ func spawn_damage_number(target: Node2D, texto: String, color: Color = Color.WHI
 	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
 	label.add_theme_constant_override("outline_size", 8)
 	label.z_index = 200
+	# CAMBIO: centrar el texto sobre el objetivo (antes crecía a la
+	# derecha y se salía de cuadro con el enemigo pegado al borde).
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var ancho_label = 320.0
+	label.size = Vector2(ancho_label, 60)
 
 	var capa = CanvasLayer.new()
 	capa.layer = 60
@@ -1019,7 +1364,11 @@ func spawn_damage_number(target: Node2D, texto: String, color: Color = Color.WHI
 	capa.add_child(label)
 
 	var pos_pantalla = target.get_global_transform_with_canvas().origin
-	label.position = pos_pantalla + Vector2(-20, -110)
+	var viewport_size = get_viewport().get_visible_rect().size
+	# Centrado horizontal sobre el objetivo, pero limitado para que no se
+	# salga por ningún borde de la pantalla.
+	var x = clamp(pos_pantalla.x - ancho_label / 2.0, 8.0, viewport_size.x - ancho_label - 8.0)
+	label.position = Vector2(x, pos_pantalla.y - 110)
 
 	var tween = create_tween()
 	tween.set_parallel(true)
@@ -1044,6 +1393,10 @@ func actualizar_indicador_turno():
 		turno_indicador.queue_free()
 		turno_indicador = null
 
+	if turno_spot != null:
+		turno_spot.queue_free()
+		turno_spot = null
+
 	if not turno_jugador:
 		return
 
@@ -1059,6 +1412,36 @@ func actualizar_indicador_turno():
 	indicador.position = Vector2(-10, -110)
 	sprite_actual.add_child(indicador)
 	turno_indicador = indicador
+
+	# CAMBIO (nuevo): spotlight/glow luminoso bajo los pies del personaje
+	# activo. Va como hijo del sprite, en la parte inferior de su rect.
+	var pies_y = 0.0
+	if sprite_actual.has_method("get_rect"):
+		pies_y = sprite_actual.get_rect().end.y
+	var spot = Sprite2D.new()
+	spot.name = "SpotTurno"
+	var grad = Gradient.new()
+	var c = color_venue()
+	grad.colors = PackedColorArray([Color(c.r, c.g, c.b, 0.6), Color(c.r, c.g, c.b, 0.0)])
+	grad.offsets = PackedFloat32Array([0.0, 1.0])
+	var gtex = GradientTexture2D.new()
+	gtex.gradient = grad
+	gtex.fill = GradientTexture2D.FILL_RADIAL
+	gtex.fill_from = Vector2(0.5, 0.5)
+	gtex.fill_to = Vector2(1.0, 0.5)
+	gtex.width = 256
+	gtex.height = 256
+	spot.texture = gtex
+	spot.scale = Vector2(0.9, 0.35)
+	spot.position = Vector2(0, pies_y - 20)
+	spot.z_index = -1
+	sprite_actual.add_child(spot)
+	turno_spot = spot
+
+	var tw_spot = create_tween()
+	tw_spot.set_loops()
+	tw_spot.tween_property(spot, "modulate:a", 0.55, 0.7).set_trans(Tween.TRANS_SINE)
+	tw_spot.tween_property(spot, "modulate:a", 1.0, 0.7).set_trans(Tween.TRANS_SINE)
 
 	var tween = create_tween()
 	tween.set_loops()
@@ -1627,8 +2010,357 @@ func mostrar_victoria_en_escena(prestigio_ganado: int, fans_ganados: int):
 	tw_tit.tween_property(titulo, "scale", Vector2(1.0, 1.0), 0.15)
 
 
+# CAMBIO (nuevo): anuncio grande del turno que entra desde un lado,
+# se planta un instante con un destello y sale. Sonido incluido.
+func anunciar_turno(nombre: String):
+	reproducir_sfx_ui(SFX_CAMBIO_TURNO)
+
+	var viewport_size = get_viewport().get_visible_rect().size
+	var capa = CanvasLayer.new()
+	capa.layer = 75
+	add_child(capa)
+
+	# franja de destello detrás del texto
+	var franja = ColorRect.new()
+	var c = color_venue()
+	franja.color = Color(c.r, c.g, c.b, 0.0)
+	franja.size = Vector2(viewport_size.x, 70)
+	franja.position = Vector2(0, viewport_size.y * 0.30)
+	capa.add_child(franja)
+
+	var etiqueta = Label.new()
+	etiqueta.text = nombre.to_upper()
+	etiqueta.add_theme_font_size_override("font_size", 46)
+	etiqueta.add_theme_color_override("font_color", Color(1, 1, 1))
+	etiqueta.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	etiqueta.add_theme_constant_override("outline_size", 7)
+	etiqueta.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	etiqueta.size = Vector2(viewport_size.x, 70)
+	etiqueta.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	etiqueta.position = Vector2(-viewport_size.x, viewport_size.y * 0.30)
+	capa.add_child(etiqueta)
+
+	var tween = create_tween()
+	# entra deslizando
+	tween.tween_property(etiqueta, "position:x", 0, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(franja, "color", Color(c.r, c.g, c.b, 0.35), 0.2)
+	# destello y se mantiene
+	tween.tween_interval(0.5)
+	# sale
+	tween.tween_property(etiqueta, "position:x", viewport_size.x, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(franja, "color", Color(c.r, c.g, c.b, 0.0), 0.25)
+	tween.tween_callback(capa.queue_free)
+
+
+# CAMBIO (nuevo): proyectil que viaja del atacante al enemigo antes del
+# impacto. Es un punto brillante con estela; 'cantidad' repite el disparo.
+func spawn_proyectil(origen: Node2D, destino: Node2D, color: Color = Color(1, 0.5, 0.2), cantidad: int = 1):
+	if origen == null or destino == null:
+		return
+
+	var capa = get_node_or_null("ProyectilFX")
+	if capa == null:
+		capa = Node2D.new()
+		capa.name = "ProyectilFX"
+		add_child(capa)
+
+	var pos_origen = origen.global_position + Vector2(0, -120)
+	var pos_destino = destino.global_position + Vector2(0, -100)
+
+	for i in range(cantidad):
+		var bala = Sprite2D.new()
+		var grad = Gradient.new()
+		grad.colors = PackedColorArray([Color(1, 1, 1, 1), Color(color.r, color.g, color.b, 0.0)])
+		grad.offsets = PackedFloat32Array([0.0, 1.0])
+		var gtex = GradientTexture2D.new()
+		gtex.gradient = grad
+		gtex.fill = GradientTexture2D.FILL_RADIAL
+		gtex.fill_from = Vector2(0.5, 0.5)
+		gtex.fill_to = Vector2(1.0, 0.5)
+		gtex.width = 48
+		gtex.height = 48
+		bala.texture = gtex
+		bala.scale = Vector2(0.9, 0.9)
+		bala.z_index = 40
+		bala.global_position = pos_origen
+		capa.add_child(bala)
+
+		var tween = create_tween()
+		tween.tween_property(bala, "global_position", pos_destino, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tween.tween_callback(bala.queue_free)
+
+		if i < cantidad - 1:
+			await get_tree().create_timer(0.06).timeout
+
+	await get_tree().create_timer(0.18).timeout
+
+
+# ============================================================
+# CAMBIO (nuevo): FX de ataque variados. Cada integrante de la banda
+# tiene su propio efecto (dispatch por índice), más 3 primitivas
+# reutilizables: onda de choque, rayo y ondas de sonido.
+# ============================================================
+
+# Textura de anillo (ring) generada por código, para shockwaves/ondas.
+func _ring_texture(color: Color) -> GradientTexture2D:
+	var grad = Gradient.new()
+	grad.colors = PackedColorArray([
+		Color(color.r, color.g, color.b, 0.0),
+		Color(color.r, color.g, color.b, 0.0),
+		Color(1, 1, 1, 0.9),
+		Color(color.r, color.g, color.b, 0.0),
+	])
+	grad.offsets = PackedFloat32Array([0.0, 0.55, 0.8, 1.0])
+	var t = GradientTexture2D.new()
+	t.gradient = grad
+	t.fill = GradientTexture2D.FILL_RADIAL
+	t.fill_from = Vector2(0.5, 0.5)
+	t.fill_to = Vector2(1.0, 0.5)
+	t.width = 128
+	t.height = 128
+	return t
+
+
+# Dispatch: elige el FX según qué integrante ataca.
+func fx_ataque_personaje(indice: int, origen: Node2D, destino: Node2D):
+	match indice:
+		0:  # Crow Storm - vocalista → ondas de sonido
+			await spawn_ondas_sonido(origen, destino, Color(1, 0.4, 0.9))
+		1:  # Blaze Inferno - guitarrista → rayo
+			spawn_rayo(origen, destino, Color(1, 0.9, 0.3))
+			await get_tree().create_timer(0.18).timeout
+		2:  # Rex Thunder - bajista → onda de choque azul
+			await spawn_proyectil(origen, destino, Color(0.3, 0.6, 1))
+			spawn_shockwave(destino, Color(0.3, 0.6, 1))
+		3:  # Crash Doom - baterista → onda de choque naranja doble
+			await spawn_proyectil(origen, destino, Color(1, 0.5, 0.2))
+			spawn_shockwave(destino, Color(1, 0.5, 0.2))
+		_:
+			await spawn_proyectil(origen, destino, color_venue())
+
+
+# CAMBIO (nuevo): flash de pantalla completa breve (para dar "punch"
+# visual a los golpes fuertes). color con alpha bajo (~0.15-0.25).
+func flash_pantalla(color: Color = Color(1, 1, 1, 0.2), duracion: float = 0.25):
+	var capa = CanvasLayer.new()
+	capa.layer = 68
+	add_child(capa)
+	var rect = ColorRect.new()
+	rect.color = color
+	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	capa.add_child(rect)
+	var tween = create_tween()
+	tween.tween_property(rect, "modulate:a", 0.0, duracion)
+	tween.tween_callback(capa.queue_free)
+
+
+# CAMBIO (nuevo): "mega impacto" — varios anillos de choque escalonados
+# + partículas extra + destello. Para máximo show en golpes fuertes.
+func mega_impacto(target: Node2D, color: Color = Color(1, 0.5, 0.2), anillos: int = 3):
+	if target == null:
+		return
+	for i in range(anillos):
+		spawn_shockwave(target, color)
+		spawn_impact_particles(target, color)
+		await get_tree().create_timer(0.07).timeout
+	flash_pantalla(Color(color.r, color.g, color.b, 0.15), 0.2)
+
+
+# Onda de choque: anillo que se expande y se desvanece sobre el objetivo.
+func spawn_shockwave(target: Node2D, color: Color = Color(1, 1, 1)):
+	if target == null:
+		return
+	var ring = Sprite2D.new()
+	ring.texture = _ring_texture(color)
+	ring.global_position = target.global_position + Vector2(0, -100)
+	ring.scale = Vector2(0.2, 0.2)
+	ring.z_index = 45
+	add_child(ring)
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(ring, "scale", Vector2(3.0, 3.0), 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(ring, "modulate:a", 0.0, 0.35)
+	tween.chain().tween_callback(ring.queue_free)
+
+
+# Rayo: línea en zigzag entre atacante y objetivo, con destello.
+func spawn_rayo(origen: Node2D, destino: Node2D, color: Color = Color(1, 0.9, 0.3)):
+	if origen == null or destino == null:
+		return
+	var p0 = origen.global_position + Vector2(0, -120)
+	var p1 = destino.global_position + Vector2(0, -100)
+
+	var linea = Line2D.new()
+	linea.width = 5.0
+	linea.default_color = color
+	linea.z_index = 46
+	var pasos = 8
+	for i in range(pasos + 1):
+		var tt = float(i) / pasos
+		var punto = p0.lerp(p1, tt)
+		if i != 0 and i != pasos:
+			var perp = (p1 - p0).orthogonal().normalized()
+			punto += perp * randf_range(-22, 22)
+		linea.add_point(punto)
+	add_child(linea)
+
+	# destello blanco breve
+	var flash = Line2D.new()
+	flash.width = 10.0
+	flash.default_color = Color(1, 1, 1, 0.7)
+	flash.z_index = 45
+	for p in linea.points:
+		flash.add_point(p)
+	add_child(flash)
+
+	var tween = create_tween()
+	tween.tween_interval(0.08)
+	tween.tween_property(linea, "modulate:a", 0.0, 0.15)
+	tween.parallel().tween_property(flash, "modulate:a", 0.0, 0.12)
+	tween.tween_callback(linea.queue_free)
+	tween.tween_callback(flash.queue_free)
+
+
+# Ondas de sonido: varios anillos que viajan del músico al enemigo.
+func spawn_ondas_sonido(origen: Node2D, destino: Node2D, color: Color = Color(1, 0.4, 0.9)):
+	if origen == null or destino == null:
+		return
+	var p0 = origen.global_position + Vector2(0, -110)
+	var p1 = destino.global_position + Vector2(0, -100)
+
+	for i in range(3):
+		var onda = Sprite2D.new()
+		onda.texture = _ring_texture(color)
+		onda.global_position = p0
+		onda.scale = Vector2(0.4, 0.4)
+		onda.z_index = 44
+		add_child(onda)
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(onda, "global_position", p1, 0.3)
+		tween.tween_property(onda, "scale", Vector2(1.1, 1.1), 0.3)
+		tween.chain().tween_property(onda, "modulate:a", 0.0, 0.1)
+		tween.chain().tween_callback(onda.queue_free)
+		await get_tree().create_timer(0.08).timeout
+
+	await get_tree().create_timer(0.15).timeout
+
+
+# CAMBIO (nuevo): estado visual del enemigo derrotado. Usa la animación
+# "derrota" si existe; si no, lo tiñe oscuro, lo inclina y lo desvanece.
+func enemigo_derrotado_visual():
+	if sprite_enemigo == null:
+		return
+	if sprite_enemigo is AnimatedSprite2D and sprite_enemigo.sprite_frames != null and sprite_enemigo.sprite_frames.has_animation("derrota"):
+		sprite_enemigo.play("derrota")
+		return
+	# Fallback sin animación: cae y se apaga
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(sprite_enemigo, "modulate", Color(0.4, 0.4, 0.5, 0.5), 0.6)
+	tween.tween_property(sprite_enemigo, "rotation", 0.4, 0.6).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(sprite_enemigo, "position:y", sprite_enemigo.position.y + 40, 0.6).set_trans(Tween.TRANS_QUAD)
+
+
 # CAMBIO (nuevo): estilo Battle Bands para botones (panel oscuro, borde
 # magenta, texto blanco). Reusa esto en otros botones que quieras.
+# ============================================================
+# CAMBIO (nuevo): pantalla de CRÉDITOS al derrotar al jefe final
+# (nivel 5). Escenario oscurecido + reflectores, texto que sube tipo
+# créditos, y al final botón a menú. Reinicia el progreso a nivel 1.
+# ============================================================
+func mostrar_creditos():
+	var viewport_size = get_viewport().get_visible_rect().size
+
+	# Banda a pose de victoria
+	for sprite in [sprite_crow, sprite_blaze, sprite_rex, sprite_crash]:
+		if sprite is AnimatedSprite2D and sprite.sprite_frames != null:
+			if sprite.sprite_frames.has_animation("victoria"):
+				sprite.play("victoria")
+			elif sprite.sprite_frames.has_animation("hype"):
+				sprite.play("hype")
+
+	var capa = CanvasLayer.new()
+	capa.layer = 95
+	capa.name = "CreditosFX"
+	add_child(capa)
+
+	var oscuro = ColorRect.new()
+	oscuro.color = Color(0, 0, 0, 0.0)
+	oscuro.set_anchors_preset(Control.PRESET_FULL_RECT)
+	oscuro.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	capa.add_child(oscuro)
+	var tw_osc = create_tween()
+	tw_osc.tween_property(oscuro, "color", Color(0, 0, 0, 0.75), 1.0)
+
+	# Texto de créditos que sube
+	var texto = Label.new()
+	texto.text = "\n\n\n¡CAMPEONES!\n\nBATTLE BANDS\n\n\nLa banda conquistó\ntodos los escenarios.\n\n\n— ALINEACIÓN —\n\nCrow Storm — Voz\nBlaze Inferno — Guitarra\nRex Thunder — Bajo\nCrash Doom — Batería\n\n\n\nGracias por jugar\n\n\n\n UNIVERSIDAD TECNOLOGICA DE CIUDAD JUAREZ\nRUTH RODRIGUEZ\nFRANSISCO DE LA CRUZ\nLEONEL ACOSTA"
+	texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	texto.add_theme_font_size_override("font_size", 34)
+	texto.add_theme_color_override("font_color", Color(1, 1, 1))
+	texto.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	texto.add_theme_constant_override("outline_size", 6)
+	texto.size = Vector2(viewport_size.x, 900)
+	texto.position = Vector2(0, viewport_size.y + 40)
+	capa.add_child(texto)
+
+	# Reflectores
+	for i in range(3):
+		var haz = Polygon2D.new()
+		haz.polygon = PackedVector2Array([
+			Vector2(0, 0), Vector2(-80, viewport_size.y), Vector2(80, viewport_size.y)])
+		haz.color = [Color(1, 0.3, 0.85, 0.12), Color(0.4, 0.6, 1, 0.12), Color(1, 0.9, 0.4, 0.10)][i]
+		haz.position = Vector2(viewport_size.x * (0.3 + 0.2 * i), 0)
+		capa.add_child(haz)
+
+	var tween = create_tween()
+	tween.tween_property(texto, "position:y", -900.0, 12.0).set_trans(Tween.TRANS_LINEAR)
+
+	# Botones al final (aparecen tras los créditos)
+	var caja_btns = HBoxContainer.new()
+	caja_btns.add_theme_constant_override("separation", 20)
+	caja_btns.position = Vector2(viewport_size.x / 2.0 - 315, viewport_size.y - 90)
+	caja_btns.modulate.a = 0.0
+	capa.add_child(caja_btns)
+
+	var btn_jugar = Button.new()
+	btn_jugar.text = "🔁 JUGAR DE NUEVO"
+	btn_jugar.custom_minimum_size = Vector2(300, 54)
+	_estilizar_boton_bb(btn_jugar)
+	btn_jugar.pressed.connect(func():
+		reiniciar_juego()
+		get_tree().change_scene_to_file("res://scenes/battle/BattleScene.tscn")
+	)
+	caja_btns.add_child(btn_jugar)
+
+	var btn_menu = Button.new()
+	btn_menu.text = "VOLVER AL MENÚ"
+	btn_menu.custom_minimum_size = Vector2(300, 54)
+	_estilizar_boton_bb(btn_menu)
+	btn_menu.pressed.connect(func():
+		reiniciar_juego()
+		get_tree().change_scene_to_file("res://scenes/ui/MainMenu.tscn")
+	)
+	caja_btns.add_child(btn_menu)
+
+	await get_tree().create_timer(4.0).timeout
+	var tw_btn = create_tween()
+	tw_btn.tween_property(caja_btns, "modulate:a", 1.0, 0.6)
+
+
+# CAMBIO (nuevo): reinicia el progreso del juego a estado inicial.
+# Borra nivel, prestigio, mejoras e inventario. Úsalo al terminar el
+# juego o si quieres un botón de "reiniciar" en el menú.
+func reiniciar_juego():
+	GameData.nivel_actual = 1
+	GameData.prestigio = 0
+	GameData.mejoras_compradas = []
+	GameData.inventario = {}
+	GameData.guardar()
+
+
 func _estilizar_boton_bb(btn: Button):
 	var normal = StyleBoxFlat.new()
 	normal.bg_color = Color(0.06, 0.06, 0.08, 0.95)

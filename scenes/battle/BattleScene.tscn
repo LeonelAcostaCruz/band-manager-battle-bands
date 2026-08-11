@@ -339,44 +339,44 @@ centered = false
 [node name="BandaJugador" type="Node2D" parent="." unique_id=577550237]
 
 [node name="CrowStorm" type="Node2D" parent="BandaJugador" unique_id=2076416914]
-position = Vector2(621, 402)
+position = Vector2(620, 328.00003)
 scale = Vector2(0.45, 0.45)
 
 [node name="CrowStorm" type="AnimatedSprite2D" parent="BandaJugador/CrowStorm" unique_id=1068220668]
-position = Vector2(-4.444418, 297.7778)
-scale = Vector2(0.744788, 0.6392755)
+position = Vector2(-17.777887, 395.55557)
+scale = Vector2(0.744788, 0.78630435)
 sprite_frames = SubResource("SpriteFrames_vvcci")
 animation = &"ataque"
 
 [node name="BlazeInferno" type="Node2D" parent="BandaJugador" unique_id=936523048]
-position = Vector2(90, 400)
+position = Vector2(76, 325)
 scale = Vector2(0.45, 0.45)
 
 [node name="BlazeInferno" type="AnimatedSprite2D" parent="BandaJugador/BlazeInferno" unique_id=1284373116]
-position = Vector2(-26.666672, 282.22223)
-scale = Vector2(0.7207514, 0.8545228)
+position = Vector2(8.888882, 373.33328)
+scale = Vector2(0.7207514, 1.0754095)
 sprite_frames = SubResource("SpriteFrames_5u8xp")
 animation = &"idle"
 frame = 4
 frame_progress = 0.55333877
 
 [node name="RexThunder" type="Node2D" parent="BandaJugador" unique_id=618404535]
-position = Vector2(466, 400)
+position = Vector2(467, 337)
 scale = Vector2(0.45, 0.45)
 
 [node name="RexThunder" type="AnimatedSprite2D" parent="BandaJugador/RexThunder" unique_id=1710096073]
-position = Vector2(17.777748, 295.5555)
-scale = Vector2(0.70571685, 0.8570174)
+position = Vector2(11.111084, 375.55557)
+scale = Vector2(0.70571685, 1.0299021)
 sprite_frames = SubResource("SpriteFrames_d37c3")
 animation = &"idle"
 
 [node name="CrashDoom" type="Node2D" parent="BandaJugador" unique_id=646846876]
-position = Vector2(260, 400)
+position = Vector2(267, 326.00003)
 scale = Vector2(0.45, 0.45)
 
 [node name="CrashDoom" type="AnimatedSprite2D" parent="BandaJugador/CrashDoom" unique_id=491675857]
-position = Vector2(40, 297.7778)
-scale = Vector2(1.0162745, 1.0630491)
+position = Vector2(28.88889, 399.99997)
+scale = Vector2(1.0162745, 1.338816)
 sprite_frames = SubResource("SpriteFrames_5b2op")
 animation = &"idle"
 frame_progress = 0.08185273
@@ -384,12 +384,12 @@ frame_progress = 0.08185273
 [node name="BandaEnemiga" type="Node2D" parent="." unique_id=253485869]
 
 [node name="Enemigo1" type="Node2D" parent="BandaEnemiga" unique_id=1213033290]
-position = Vector2(995.00006, 399)
+position = Vector2(872, 412)
 scale = Vector2(0.55, 0.55)
 
 [node name="Enemigo1" type="AnimatedSprite2D" parent="BandaEnemiga/Enemigo1" unique_id=838575741]
-position = Vector2(34.54536, 223.63635)
-scale = Vector2(1.2191465, 1.3172742)
+position = Vector2(149.09096, 205.45451)
+scale = Vector2(1.3055959, 1.5180122)
 sprite_frames = ExtResource("9_nnhtb")
 animation = &"ataque"
 frame = 2
@@ -401,8 +401,8 @@ frame_progress = 1.0
 custom_minimum_size = Vector2(550, 28)
 offset_left = 250.0
 offset_top = 30.0
-offset_right = 750.0
-offset_bottom = 57.0
+offset_right = 800.0
+offset_bottom = 58.0
 
 [node name="TurnoLabel" type="Label" parent="HUD" unique_id=323462695]
 custom_minimum_size = Vector2(400, 20)
@@ -413,10 +413,10 @@ offset_bottom = 28.0
 theme_override_font_sizes/font_size = 20
 
 [node name="AccionesPanel" type="VBoxContainer" parent="HUD" unique_id=847725538]
-offset_left = 28.311401
-offset_top = 25.63684
-offset_right = 208.3114
-offset_bottom = 247.63684
+offset_left = 838.4715
+offset_top = 32.0
+offset_right = 1018.4715
+offset_bottom = 262.6455
 pivot_offset = Vector2(180.3352, 1.5106812)
 size_flags_stretch_ratio = 0.37
 theme_override_constants/separation = 14
@@ -447,10 +447,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -327.22693
-offset_top = -116.33183
-offset_right = 28.773071
-offset_bottom = 30.668152
+offset_left = -527.6448
+offset_top = -267.41046
+offset_right = -171.64471
+offset_bottom = -120.41046
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.8, 0.8)
